@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Affect Adjective Map</title>
+<style>
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6b6b70;
+  --faint: #d9d7d2;
+  --grid: #e8e6e1;
+  --accent: #3b5bdb;
+  --accent-ink: #ffffff;
+  --chip: #f0efeb;
+  --chip-on: #3b5bdb;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --pos: #2f9e6b;
+  --neg: #d9485f;
+  --dot-l: 52%;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141416;
+    --surface: #1e1e22;
+    --ink: #ececef;
+    --muted: #9b9ba3;
+    --faint: #3a3a40;
+    --grid: #2a2a2f;
+    --accent: #7c95ff;
+    --accent-ink: #0e0e10;
+    --chip: #2a2a30;
+    --chip-on: #7c95ff;
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    --dot-l: 62%;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141416;
+  --surface: #1e1e22;
+  --ink: #ececef;
+  --muted: #9b9ba3;
+  --faint: #3a3a40;
+  --grid: #2a2a2f;
+  --accent: #7c95ff;
+  --accent-ink: #0e0e10;
+  --chip: #2a2a30;
+  --chip-on: #7c95ff;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --dot-l: 62%;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: 24px 16px 120px;
+}
+main { max-width: 760px; margin: 0 auto; }
+header h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+header p { margin: 0 0 16px; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 12px; color: var(--muted); font-size: 14px; }
+.controls label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.plot-wrap { background: var(--surface); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0,0,0,.06); padding: 8px; }
+svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
+.axis { stroke: var(--faint); stroke-width: 1; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.ring { fill: none; stroke: var(--faint); stroke-dasharray: 3 4; }
+.lbl { fill: var(--muted); font-size: 12px; }
+.corner { fill: var(--muted); font-size: 12px; font-style: italic; opacity: .8; }
+.axis-title { fill: var(--ink); font-size: 13px; font-weight: 600; }
+.hit { fill: transparent; cursor: pointer; outline: none; }
+.hit:focus-visible + .dot { stroke: var(--accent); stroke-width: 3; }
+.dot { pointer-events: none; stroke: var(--surface); stroke-width: 1.5; transition: r .12s; }
+.dot.empty { fill: none; stroke: var(--faint); stroke-width: 1; }
+.dot.hl { stroke: var(--ink); stroke-width: 2; }
+.dot.has-sel { stroke: var(--accent); stroke-width: 2.5; }
+.word-dot { pointer-events: none; opacity: .35; }
+#tip {
+  position: fixed; z-index: 10; pointer-events: none; max-width: 260px;
+  background: var(--surface); color: var(--ink); border-radius: 8px; box-shadow: var(--shadow);
+  padding: 8px 10px; font-size: 13px; opacity: 0; transition: opacity .1s;
+}
+#tip.show { opacity: 1; }
+#tip .h { color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+#tip .w { line-height: 1.5; }
+#tip .more { color: var(--muted); font-size: 12px; margin-top: 2px; }
+dialog {
+  border: 0; border-radius: 14px; padding: 0; width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px); background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
+}
+dialog::backdrop { background: rgba(0, 0, 0, .35); }
+.dlg { display: flex; flex-direction: column; max-height: calc(100vh - 48px); }
+.dlg-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; padding: 16px 18px 8px; }
+.dlg-head h2 { margin: 0; font-size: 17px; }
+.dlg-head .sub { color: var(--muted); font-size: 13px; }
+.dlg-body { padding: 4px 18px 8px; overflow-y: auto; }
+.dlg-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; padding: 12px 18px 16px; border-top: 1px solid var(--grid); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  border: 1px solid transparent; background: var(--chip); color: var(--ink); border-radius: 999px;
+  padding: 4px 11px; font: inherit; font-size: 14px; cursor: pointer;
+}
+.chip:hover { border-color: var(--faint); }
+.chip[aria-pressed="true"] { background: var(--chip-on); color: var(--accent-ink); }
+.chip small { opacity: .6; font-size: 11px; margin-left: 4px; }
+.empty-note { color: var(--muted); font-size: 14px; }
+button.btn {
+  font: inherit; font-size: 14px; border-radius: 8px; padding: 6px 12px; cursor: pointer;
+  border: 1px solid var(--faint); background: transparent; color: var(--ink);
+}
+button.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+button.btn:disabled { opacity: .45; cursor: default; }
+button.icon { border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 2px 6px; }
+.linkish { border: 0; background: none; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; padding: 6px 0 0; }
+.group { display: flex; gap: 8px; flex-wrap: wrap; }
+#tray {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--surface);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.08); padding: 10px 16px; transform: translateY(110%); transition: transform .18s;
+}
+#tray.show { transform: none; }
+.tray-in { max-width: 760px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tray-words { flex: 1 1 260px; display: flex; gap: 4px; flex-wrap: wrap; max-height: 64px; overflow-y: auto; }
+.tray-words .chip { font-size: 13px; padding: 2px 8px; }
+select { font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--faint); background: var(--surface); color: var(--ink); }
+#toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg);
+  padding: 6px 12px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 20;
+}
+#toast.show { opacity: 1; }
+footer { color: var(--muted); font-size: 12px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Affect adjective map</h1>
+    <p>Adjectives placed in the valence × arousal space by Sentiment2D. Hover a point to preview its words; click to pick words and copy them.</p>
+  </header>
+  <div class="controls">
+    <label><input type="checkbox" id="showWords"> Show every word's position</label>
+    <label><input type="checkbox" id="showEmpty" checked> Show empty points</label>
+    <span id="summary"></span>
+  </div>
+  <div class="plot-wrap"><svg id="plot" role="img" aria-label="Valence by arousal grid of adjectives"></svg></div>
+  <footer id="foot"></footer>
+</main>
+
+<div id="tip" role="tooltip"></div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <div>
+        <h2 id="dlgTitle"></h2>
+        <div class="sub" id="dlgSub"></div>
+      </div>
+      <button class="icon" id="dlgClose" aria-label="Close">×</button>
+    </div>
+    <div class="dlg-body">
+      <div class="chips" id="dlgChips"></div>
+      <button class="linkish" id="dlgMore" hidden></button>
+    </div>
+    <div class="dlg-foot">
+      <div class="group">
+        <button class="btn" id="dlgAll">Select shown</button>
+        <button class="btn" id="dlgNone">Clear</button>
+      </div>
+      <div class="group">
+        <button class="btn primary" id="dlgCopy">Copy selected</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div id="tray" aria-live="polite">
+  <div class="tray-in">
+    <strong id="trayCount"></strong>
+    <div class="tray-words" id="trayWords"></div>
+    <select id="fmt" aria-label="Copy format">
+      <option value="comma">word, word</option>
+      <option value="lines">one per line</option>
+      <option value="json">JSON array</option>
+    </select>
+    <button class="btn primary" id="trayCopy">Copy all</button>
+    <button class="btn" id="trayClear">Clear</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script id="grid-data" type="application/json">/*__GRID_DATA__*/null</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("grid-data").textContent);
+  const K = DATA.k || 10;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("plot");
+  const tip = document.getElementById("tip");
+  const dlg = document.getElementById("dlg");
+  const selected = new Map(); // word -> [valence, arousal]
+
+  // ---------- geometry ----------
+  const W = 640, PAD = 52, S = W - 2 * PAD;
+  const lo = -1, hi = 1;
+  const X = v => PAD + (v - lo) / (hi - lo) * S;
+  const Y = a => PAD + (hi - a) / (hi - lo) * S;
+  const fmt = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(1);
+  const maxN = Math.max(1, ...DATA.cells.map(c => c.words.length));
+  const radius = n => n === 0 ? 3 : 4 + 14 * Math.sqrt(n / maxN);
+  const hue = (v, a) => (Math.atan2(a, v) * 180 / Math.PI + 360) % 360;
+  const colour = (v, a) => {
+    const sat = Math.min(1, Math.hypot(v, a)) * 65 + 10;
+    return `hsl(${(150 - hue(v, a) + 360) % 360} ${sat}% var(--dot-l))`;
+  };
+
+  const el = (tag, attrs = {}, parent = svg) => {
+    const e = document.createElementNS(svgNS, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    parent.appendChild(e);
+    return e;
+  };
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${W}`);
+
+  // grid lines + ticks
+  const ticks = [-1, -0.5, 0, 0.5, 1];
+  for (const t of ticks) {
+    el("line", { x1: X(t), x2: X(t), y1: Y(-1), y2: Y(1), class: t === 0 ? "axis" : "gridline" });
+    el("line", { y1: Y(t), y2: Y(t), x1: X(-1), x2: X(1), class: t === 0 ? "axis" : "gridline" });
+    el("text", { x: X(t), y: Y(-1) + 18, "text-anchor": "middle", class: "lbl" }).textContent = t;
+    el("text", { x: X(-1) - 10, y: Y(t) + 4, "text-anchor": "end", class: "lbl" }).textContent = t;
+  }
+  el("circle", { cx: X(0), cy: Y(0), r: S / 2, class: "ring" });
+  el("text", { x: X(0), y: W - 8, "text-anchor": "middle", class: "axis-title" }).textContent = "Valence →";
+  el("text", { x: 14, y: Y(0), "text-anchor": "middle", class: "axis-title", transform: `rotate(-90 14 ${Y(0)})` }).textContent = "Arousal →";
+  const corners = [["happy", 1, 1, "end"], ["angry", -1, 1, "start"], ["gloomy", -1, -1, "start"], ["calm", 1, -1, "end"]];
+  for (const [name, v, a, anchor] of corners) {
+    el("text", { x: X(v) + (v > 0 ? 22 : -22), y: Y(a) + (a > 0 ? -24 : 38), "text-anchor": anchor, class: "corner" }).textContent = name;
+  }
+
+  // every word as a faint dot (toggle)
+  const wordLayer = el("g", { visibility: "hidden" });
+  for (const c of DATA.cells) for (const [, v, a] of c.words) {
+    el("circle", { cx: X(v), cy: Y(a), r: 1.6, style: `fill:${colour(v, a)}`, class: "word-dot" }, wordLayer);
+  }
+
+  // grid points
+  const pointLayer = el("g");
+  const cellStep = S * DATA.spacing / (hi - lo);
+  const points = DATA.cells.map((c, i) => {
+    const n = c.words.length;
+    const g = el("g", { "data-empty": n === 0 }, pointLayer);
+    const hit = el("rect", {
+      x: X(c.v) - cellStep / 2, y: Y(c.a) - cellStep / 2, width: cellStep, height: cellStep,
+      class: "hit", tabindex: 0, role: "button",
+      "aria-label": `valence ${fmt(c.v)}, arousal ${fmt(c.a)}: ${n} words`,
+    }, g);
+    const dot = el("circle", { cx: X(c.v), cy: Y(c.a), r: radius(n), class: "dot" + (n ? "" : " empty") }, g);
+    if (n) dot.style.fill = colour(c.v, c.a);
+    hit.addEventListener("pointerenter", e => { dot.classList.add("hl"); showTip(c, e); });
+    hit.addEventListener("pointermove", e => moveTip(e));
+    hit.addEventListener("pointerleave", () => { dot.classList.remove("hl"); hideTip(); });
+    hit.addEventListener("focus", () => { const r = hit.getBoundingClientRect(); showTip(c, { clientX: r.right, clientY: r.top }); });
+    hit.addEventListener("blur", hideTip);
+    hit.addEventListener("click", () => { hideTip(); openCell(c); });
+    hit.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openCell(c); } });
+    return { c, dot, g };
+  });
+
+  // ---------- tooltip ----------
+  const esc = s => s.replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  function showTip(c, e) {
+    const n = c.words.length;
+    const head = `<div class="h">(${fmt(c.v)}, ${fmt(c.a)}) · ${n} word${n === 1 ? "" : "s"}</div>`;
+    const body = n ? `<div class="w">${c.words.slice(0, K).map(w => esc(w[0])).join(", ")}</div>` : `<div class="w empty-note">No words here</div>`;
+    const more = n > K ? `<div class="more">+${n - K} more · click to see all</div>` : n ? `<div class="more">click to select</div>` : "";
+    tip.innerHTML = head + body + more;
+    tip.classList.add("show");
+    moveTip(e);
+  }
+  function moveTip(e) {
+    const pad = 14, r = tip.getBoundingClientRect();
+    let x = e.clientX + pad, y = e.clientY + pad;
+    if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+    if (y + r.height > innerHeight - 8) y = e.clientY - r.height - pad;
+    tip.style.left = Math.max(8, x) + "px";
+    tip.style.top = Math.max(8, y) + "px";
+  }
+  function hideTip() { tip.classList.remove("show"); }
+
+  // ---------- dialog ----------
+  let current = null, showAll = false;
+  const chipsEl = document.getElementById("dlgChips");
+  const moreBtn = document.getElementById("dlgMore");
+  function openCell(c) {
+    current = c; showAll = c.words.length <= K;
+    document.getElementById("dlgTitle").textContent = `Valence ${fmt(c.v)}, arousal ${fmt(c.a)}`;
+    const n = c.words.length;
+    document.getElementById("dlgSub").textContent =
+      n ? `${n} word${n === 1 ? "" : "s"}, nearest first. Click words to select them.` : "No words were rated near this point.";
+    renderChips();
+    dlg.showModal();
+  }
+  function shownWords() { return current ? (showAll ? current.words : current.words.slice(0, K)) : []; }
+  function renderChips() {
+    chipsEl.replaceChildren();
+    const words = shownWords();
+    if (!words.length) chipsEl.innerHTML = `<span class="empty-note">Nothing to pick here — try a neighbouring point.</span>`;
+    for (const [w, v, a] of words) {
+      const b = document.createElement("button");
+      b.className = "chip"; b.type = "button";
+      b.setAttribute("aria-pressed", selected.has(w));
+      b.title = `valence ${v.toFixed(2)}, arousal ${a.toFixed(2)}`;
+      b.textContent = w;
+      b.addEventListener("click", () => { toggle(w, v, a); b.setAttribute("aria-pressed", selected.has(w)); updateDlgButtons(); });
+      chipsEl.appendChild(b);
+    }
+    const hidden = current.words.length - words.length;
+    moreBtn.hidden = hidden <= 0 && !(showAll && current.words.length > K);
+    moreBtn.textContent = hidden > 0 ? `Show all ${current.words.length} words` : `Show top ${K} only`;
+    updateDlgButtons();
+  }
+  function updateDlgButtons() {
+    const words = shownWords();
+    const anySel = current && current.words.some(([w]) => selected.has(w));
+    document.getElementById("dlgAll").disabled = !words.length || words.every(([w]) => selected.has(w));
+    document.getElementById("dlgNone").disabled = !anySel;
+    document.getElementById("dlgCopy").disabled = !anySel;
+  }
+  moreBtn.addEventListener("click", () => { showAll = !showAll; renderChips(); });
+  document.getElementById("dlgAll").addEventListener("click", () => { for (const [w, v, a] of shownWords()) selected.set(w, [v, a]); syncAll(); renderChips(); });
+  document.getElementById("dlgNone").addEventListener("click", () => { for (const [w] of current.words) selected.delete(w); syncAll(); renderChips(); });
+  document.getElementById("dlgCopy").addEventListener("click", () => copy(current.words.filter(([w]) => selected.has(w)).map(([w]) => w)));
+  document.getElementById("dlgClose").addEventListener("click", () => dlg.close());
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+  // ---------- selection + tray ----------
+  function toggle(w, v, a) { selected.has(w) ? selected.delete(w) : selected.set(w, [v, a]); syncAll(); }
+  function syncAll() {
+    for (const p of points) p.dot.classList.toggle("has-sel", p.c.words.some(([w]) => selected.has(w)));
+    const tray = document.getElementById("tray");
+    tray.classList.toggle("show", selected.size > 0);
+    document.getElementById("trayCount").textContent = `${selected.size} selected`;
+    const box = document.getElementById("trayWords");
+    box.replaceChildren();
+    for (const w of selected.keys()) {
+      const b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.setAttribute("aria-pressed", "true");
+      b.title = "Remove"; b.textContent = w + " ×";
+      b.addEventListener("click", () => { selected.delete(w); syncAll(); if (dlg.open) renderChips(); });
+      box.appendChild(b);
+    }
+  }
+  document.getElementById("trayCopy").addEventListener("click", () => copy([...selected.keys()]));
+  document.getElementById("trayClear").addEventListener("click", () => { selected.clear(); syncAll(); if (dlg.open) renderChips(); });
+
+  function format(words) {
+    const f = document.getElementById("fmt").value;
+    return f === "lines" ? words.join("\n") : f === "json" ? JSON.stringify(words) : words.join(", ");
+  }
+  async function copy(words) {
+    const text = format(words);
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      (dlg.open ? dlg : document.body).appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } finally { ta.remove(); }
+    }
+    toast(`Copied ${words.length} word${words.length === 1 ? "" : "s"}`);
+  }
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
+  }
+
+  // ---------- controls + footer ----------
+  document.getElementById("showWords").addEventListener("change", e => wordLayer.setAttribute("visibility", e.target.checked ? "visible" : "hidden"));
+  document.getElementById("showEmpty").addEventListener("change", e => {
+    for (const p of points) if (!p.c.words.length) p.g.style.display = e.target.checked ? "" : "none";
+  });
+  const total = DATA.cells.reduce((s, c) => s + c.words.length, 0);
+  const full = DATA.cells.filter(c => c.words.length >= K).length;
+  document.getElementById("summary").textContent = `${total} words · ${DATA.cells.length} points · ${full} with ≥${K} words`;
+  document.getElementById("foot").textContent =
+    `Each word was rated in the sentence “${DATA.template.replace("{}", "___")}” and assigned to its nearest grid point ` +
+    `(spacing ${DATA.spacing}). Dot area ∝ word count. Corner labels are the model's four zero-shot classes.`;
+})();
+</script>
+</body>
+</html>

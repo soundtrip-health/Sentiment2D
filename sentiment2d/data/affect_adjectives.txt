@@ -1,0 +1,109 @@
+# Adjectives describing affective states (feelings, moods, energy levels).
+# Whitespace-separated entries (hyphenate multi-word entries); lines starting with '#' are ignored.
+# Hand-curated for Sentiment2D; covers all four valence/arousal quadrants and the neutral middle.
+# --- positive, high arousal
+happy joyful joyous elated ecstatic euphoric exhilarated thrilled excited enthusiastic eager
+exuberant jubilant overjoyed delighted gleeful giddy buoyant bubbly cheerful cheery merry jolly
+jovial lively vivacious spirited animated energetic energized vibrant zestful zealous passionate
+fervent ardent amazed astonished awed awestruck dazzled exultant triumphant victorious proud
+inspired motivated empowered invigorated refreshed revitalized rejuvenated stimulated alert
+playful frisky mischievous amused entertained tickled hilarious laughing smiling beaming radiant
+glowing sparkling effervescent rapturous blissful enchanted entranced captivated
+fascinated intrigued curious interested engaged absorbed engrossed riveted spellbound smitten
+infatuated lovestruck amorous adoring loving affectionate romantic flirtatious aroused sexy
+confident bold daring adventurous courageous brave fearless determined driven ambitious
+optimistic hopeful expectant anticipating keen ready pumped psyched stoked hyped amped
+wired charged electrified triumphal celebratory festive boisterous rowdy hyper manic
+heady intoxicated dizzy breathless flushed tingly fizzy upbeat chipper peppy perky sunny bright
+brisk zippy feisty vigorous dynamic sprightly spry bouncy cocky assertive powerful strong
+# --- negative, high arousal
+angry furious enraged irate livid incensed outraged infuriated irritated annoyed aggravated
+agitated exasperated frustrated vexed riled heated hostile aggressive belligerent combative
+vindictive vengeful spiteful bitter resentful indignant cross mad fuming seething raging
+explosive volatile hysterical frantic frenzied panicked panicky terrified horrified petrified
+scared frightened afraid fearful alarmed startled shocked spooked threatened jumpy jittery
+nervous anxious worried uneasy tense stressed overwhelmed harried frazzled flustered rattled
+shaken distressed distraught upset disturbed troubled perturbed disconcerted unnerved edgy
+restless fidgety antsy twitchy uptight frenetic hyperactive overstimulated
+overwrought overexcited desperate tormented tortured anguished agonized panicky apprehensive
+dreading insecure paranoid suspicious defensive jealous envious possessive humiliated mortified
+embarrassed ashamed guilty disgusted repulsed revolted sickened nauseated appalled offended
+insulted betrayed wronged cheated violated pressured cornered trapped hunted harassed
+impatient grumpy cranky crabby grouchy irritable testy touchy snappy prickly peevish petulant
+sulky huffy moody temperamental tempestuous stormy impulsive reckless wild unhinged crazed
+deranged bewildered confused baffled perplexed disoriented flummoxed rushed hurried busy hectic
+overloaded overworked burdened strained hassled bothered nettled galled piqued affronted
+contemptuous scornful disdainful hateful murderous rabid savage ferocious fierce
+# --- negative, low arousal
+sad unhappy sorrowful mournful grieving grief-stricken heartbroken heartsick brokenhearted
+depressed dejected despondent despairing hopeless helpless powerless defeated discouraged
+disheartened demoralized dispirited downcast downhearted crestfallen deflated disappointed
+disillusioned gloomy glum morose melancholy melancholic somber sombre dismal dreary bleak blue
+low down miserable wretched forlorn woeful doleful lonely lonesome alone isolated abandoned
+rejected unwanted unloved neglected forgotten invisible empty hollow numb deadened dead
+lifeless listless lethargic sluggish slow tired weary exhausted fatigued drained depleted spent
+sleepy drowsy groggy dozy lazy idle inert passive sedentary apathetic
+indifferent uninterested unmotivated unenthusiastic bored jaded weary disinterested detached
+withdrawn distant aloof reserved resigned defeated broken shattered crushed devastated
+wounded hurt aching pained suffering sorry regretful remorseful repentant contrite rueful
+nostalgic wistful homesick longing yearning pining sentimental pensive brooding sullen
+dour sour lugubrious funereal tearful weepy teary lachrymose sniffly sickly ill sick queasy
+feeble weak frail faint lightheaded foggy hazy dazed stunned shell-shocked catatonic vacant
+blank dull flat muted subdued quiet still sedate languid limp floppy heavy leaden sapped
+enervated debilitated drowsy somnolent torpid comatose stagnant stuck aimless purposeless
+meaningless worthless useless inadequate inferior unworthy insignificant small pathetic
+pitiful self-pitying self-loathing ashamed embarrassed shy timid meek bashful sheepish awkward
+uncomfortable lost confused uncertain unsure doubtful skeptical cynical pessimistic fatalistic
+gray grey cold frozen icy chilly lukewarm tepid uninspired unfulfilled dissatisfied discontent
+discontented displeased unsatisfied bummed disgruntled glum mopey mopish dreary blah meh
+# --- positive, low arousal
+calm relaxed serene peaceful tranquil content contented satisfied fulfilled gratified pleased
+comfortable cozy cosy snug safe secure protected sheltered settled grounded centered centred
+balanced stable steady composed collected unruffled unflappable placid mellow easygoing laid-back
+carefree untroubled unworried relieved restful rested soothed comforted reassured consoled
+lulled pacified quiet gentle tender soft warm kind grateful thankful appreciative blessed lucky
+fortunate humble humbled modest patient tolerant accepting forgiving understanding compassionate
+sympathetic empathetic caring nurturing loving devoted loyal trusting trustful open receptive
+present mindful aware meditative contemplative reflective thoughtful introspective dreamy
+drifting floating weightless light airy loose limber supple easy leisurely unhurried slow
+lazy languorous lounging sleepy cuddly snuggly sated full nourished healthy well whole healed
+recovered refreshed renewed restored mended at-ease harmonious unified connected belonging
+accepted loved cherished valued appreciated respected admired supported encouraged validated
+understood heard seen welcome welcomed included confident assured self-assured poised dignified
+graceful noble wise sage philosophical spiritual prayerful reverent worshipful
+holy sacred transcendent enlightened awakened illuminated sublime heavenly angelic beatific
+benevolent generous charitable gracious hospitable friendly amiable affable cordial genial
+pleasant agreeable nice sweet lovely fine okay alright good great wonderful marvelous marvellous
+fantastic terrific splendid superb glorious magnificent excellent
+# --- near neutral / mixed / cognitive
+neutral indifferent ambivalent conflicted torn mixed unsure hesitant cautious careful wary
+guarded watchful vigilant attentive focused concentrated alert awake sober serious solemn
+earnest sincere stoic impassive unemotional dispassionate detached objective rational logical
+analytical pragmatic practical matter-of-fact businesslike neutral normal ordinary
+typical routine stable regular steady even moderate measured reserved quiet
+curious inquisitive puzzled surprised startled unsure doubtful questioning wondering pondering
+thinking musing daydreaming distracted preoccupied absentminded forgetful scatterbrained
+spacey dreamy hungry thirsty full warm cool hot cold sweaty itchy achy sore stiff tense
+twitchy shaky trembling shivering quivering sensitive vulnerable exposed raw fragile delicate
+brittle tender emotional sentimental touched moved stirred affected impressed struck humbled
+bemused nonplussed indecisive undecided uncommitted noncommittal unconcerned casual nonchalant
+blase blasé cool unfazed unimpressed unmoved unaffected unbothered sanguine philosophical
+resigned stoical tolerant patient restrained controlled disciplined self-controlled
+# --- additional states
+alive awake vital hale hearty robust fit spry nimble agile quick sharp clearheaded lucid clear
+focused productive efficient capable competent accomplished successful satisfied victorious
+lucky free liberated unburdened unencumbered independent autonomous self-reliant
+sovereign uninhibited spontaneous expressive outgoing sociable gregarious talkative chatty
+loud noisy rambunctious raucous unruly rebellious defiant stubborn obstinate headstrong willful
+petty mean cruel callous cold-hearted heartless ruthless merciless sadistic vicious nasty
+rude snide sarcastic sardonic mocking smug arrogant conceited vain haughty superior entitled
+greedy covetous needy clingy dependent desperate lovesick heartsore jilted spurned snubbed
+slighted ignored excluded ostracized alienated estranged disconnected adrift unmoored unanchored
+displaced uprooted homeless orphaned widowed bereaved bereft mourning lamenting keening
+wailing sobbing crying weeping whimpering whining complaining grumbling griping
+startled astounded stunned flabbergasted dumbfounded speechless gobsmacked thunderstruck
+overawed overcome overjoyed overwhelmed overextended overcommitted overstretched overtired
+underwhelmed unimpressed underappreciated overlooked misunderstood mistrusted distrustful
+mistrustful leery skittish timorous cowardly craven spineless wimpy gutless chicken
+squeamish queasy jumpy shy introverted reclusive solitary hermitic secretive
+sneaky sly cunning scheming calculating manipulative devious shifty evasive cagey

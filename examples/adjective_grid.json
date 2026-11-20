@@ -1,0 +1,1273 @@
+{
+ "spacing": 0.2,
+ "k": 10,
+ "layout": "points",
+ "rank": "distance",
+ "min_zipf": 0.0,
+ "fill": false,
+ "sources": [
+  "curated"
+ ],
+ "template": "I feel {}.",
+ "cells": [
+  {
+   "valence": -1.0,
+   "arousal": 1.0,
+   "words": [
+    "raging",
+    "aggressive",
+    "rabid",
+    "rowdy",
+    "ferocious",
+    "riled",
+    "furious",
+    "rebellious",
+    "enraged",
+    "heated"
+   ],
+   "n_in_cell": 17
+  },
+  {
+   "valence": -0.8,
+   "arousal": 1.0,
+   "words": [
+    "explosive",
+    "piqued",
+    "frenzied",
+    "rambunctious"
+   ],
+   "n_in_cell": 4
+  },
+  {
+   "valence": -0.6,
+   "arousal": 1.0,
+   "words": [
+    "charged",
+    "hot"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": -0.4,
+   "arousal": 1.0,
+   "words": [
+    "zealous"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": -0.2,
+   "arousal": 1.0,
+   "words": [
+    "wild"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.0,
+   "arousal": 1.0,
+   "words": [
+    "aroused"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.2,
+   "arousal": 1.0,
+   "words": [
+    "passionate"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.4,
+   "arousal": 1.0,
+   "words": [
+    "manic"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.6,
+   "arousal": 1.0,
+   "words": [
+    "flushed",
+    "boisterous"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": 0.8,
+   "arousal": 1.0,
+   "words": [
+    "hyper",
+    "amped",
+    "electrified",
+    "animated",
+    "fervent",
+    "awakened"
+   ],
+   "n_in_cell": 6
+  },
+  {
+   "valence": 1.0,
+   "arousal": 1.0,
+   "words": [
+    "giddy",
+    "ecstatic",
+    "jubilant",
+    "exultant",
+    "exuberant",
+    "overjoyed",
+    "enthusiastic",
+    "excited",
+    "gleeful",
+    "elated"
+   ],
+   "n_in_cell": 64
+  },
+  {
+   "valence": -1.0,
+   "arousal": 0.8,
+   "words": [
+    "infuriated",
+    "offended",
+    "indignant",
+    "vengeful",
+    "impatient",
+    "irate",
+    "combative",
+    "crazed",
+    "ruthless",
+    "livid"
+   ],
+   "n_in_cell": 13
+  },
+  {
+   "valence": -0.8,
+   "arousal": 0.8,
+   "words": [
+    "headstrong",
+    "hysterical",
+    "greedy",
+    "reckless",
+    "arrogant"
+   ],
+   "n_in_cell": 5
+  },
+  {
+   "valence": -0.6,
+   "arousal": 0.8,
+   "words": [
+    "jealous",
+    "frenetic",
+    "loud"
+   ],
+   "n_in_cell": 3
+  },
+  {
+   "valence": -0.4,
+   "arousal": 0.8,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": -0.2,
+   "arousal": 0.8,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.0,
+   "arousal": 0.8,
+   "words": [
+    "sharp"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.2,
+   "arousal": 0.8,
+   "words": [
+    "hyperactive"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.4,
+   "arousal": 0.8,
+   "words": [
+    "wired",
+    "stirred"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": 0.6,
+   "arousal": 0.8,
+   "words": [
+    "daring",
+    "expressive"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": 0.8,
+   "arousal": 0.8,
+   "words": [
+    "envious",
+    "lovesick",
+    "intoxicated",
+    "dynamic",
+    "ambitious",
+    "cocky",
+    "emotional",
+    "bold",
+    "mischievous",
+    "awestruck"
+   ],
+   "n_in_cell": 15
+  },
+  {
+   "valence": 1.0,
+   "arousal": 0.8,
+   "words": [
+    "wonderful",
+    "splendid",
+    "buoyant",
+    "pleased",
+    "hearty",
+    "encouraged",
+    "entertained",
+    "magnificent",
+    "successful",
+    "upbeat"
+   ],
+   "n_in_cell": 57
+  },
+  {
+   "valence": -1.0,
+   "arousal": 0.6,
+   "words": [
+    "hostile",
+    "testy",
+    "cross",
+    "snappy",
+    "aggravated",
+    "irritated",
+    "seething",
+    "affronted",
+    "tempestuous",
+    "fuming"
+   ],
+   "n_in_cell": 13
+  },
+  {
+   "valence": -0.8,
+   "arousal": 0.6,
+   "words": [
+    "thunderstruck",
+    "noisy"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": -0.6,
+   "arousal": 0.6,
+   "words": [
+    "possessive"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": -0.4,
+   "arousal": 0.6,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": -0.2,
+   "arousal": 0.6,
+   "words": [
+    "covetous"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.0,
+   "arousal": 0.6,
+   "words": [
+    "driven",
+    "astounded",
+    "entitled"
+   ],
+   "n_in_cell": 3
+  },
+  {
+   "valence": 0.2,
+   "arousal": 0.6,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.4,
+   "arousal": 0.6,
+   "words": [
+    "busy"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.6,
+   "arousal": 0.6,
+   "words": [
+    "brisk"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.8,
+   "arousal": 0.6,
+   "words": [
+    "assertive",
+    "fascinated",
+    "interested",
+    "talkative",
+    "awed",
+    "captivated"
+   ],
+   "n_in_cell": 6
+  },
+  {
+   "valence": 1.0,
+   "arousal": 0.6,
+   "words": [
+    "superb",
+    "good",
+    "cheerful",
+    "lucky",
+    "appreciated",
+    "cheery",
+    "fortunate",
+    "spry",
+    "excellent",
+    "warm"
+   ],
+   "n_in_cell": 16
+  },
+  {
+   "valence": -1.0,
+   "arousal": 0.4,
+   "words": [
+    "insulted",
+    "spiteful",
+    "savage",
+    "wronged",
+    "unruly",
+    "vicious",
+    "annoyed",
+    "temperamental",
+    "prickly",
+    "volatile"
+   ],
+   "n_in_cell": 10
+  },
+  {
+   "valence": -0.8,
+   "arousal": 0.4,
+   "words": [
+    "antsy",
+    "haughty"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": -0.6,
+   "arousal": 0.4,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": -0.4,
+   "arousal": 0.4,
+   "words": [
+    "overstimulated",
+    "astonished",
+    "willful"
+   ],
+   "n_in_cell": 3
+  },
+  {
+   "valence": -0.2,
+   "arousal": 0.4,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.0,
+   "arousal": 0.4,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.2,
+   "arousal": 0.4,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.4,
+   "arousal": 0.4,
+   "words": [
+    "riveted"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.6,
+   "arousal": 0.4,
+   "words": [
+    "intrigued",
+    "wistful",
+    "determined"
+   ],
+   "n_in_cell": 3
+  },
+  {
+   "valence": 0.8,
+   "arousal": 0.4,
+   "words": [
+    "alert"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 1.0,
+   "arousal": 0.4,
+   "words": [
+    "chipper",
+    "sunny",
+    "nourished",
+    "validated",
+    "romantic",
+    "heavenly",
+    "engaged",
+    "sprightly",
+    "valued",
+    "rejuvenated"
+   ],
+   "n_in_cell": 22
+  },
+  {
+   "valence": -1.0,
+   "arousal": 0.2,
+   "words": [
+    "revolted",
+    "cheated",
+    "violated",
+    "deranged",
+    "displeased",
+    "rude",
+    "jilted",
+    "harassed",
+    "resentful",
+    "betrayed"
+   ],
+   "n_in_cell": 14
+  },
+  {
+   "valence": -0.8,
+   "arousal": 0.2,
+   "words": [
+    "hectic",
+    "stubborn",
+    "raw"
+   ],
+   "n_in_cell": 3
+  },
+  {
+   "valence": -0.6,
+   "arousal": 0.2,
+   "words": [
+    "gobsmacked"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": -0.4,
+   "arousal": 0.2,
+   "words": [
+    "impulsive"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": -0.2,
+   "arousal": 0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.0,
+   "arousal": 0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.2,
+   "arousal": 0.2,
+   "words": [
+    "yearning"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.4,
+   "arousal": 0.2,
+   "words": [
+    "curious"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.6,
+   "arousal": 0.2,
+   "words": [
+    "inquisitive"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.8,
+   "arousal": 0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 1.0,
+   "arousal": 0.2,
+   "words": [
+    "mended",
+    "devoted",
+    "free",
+    "belonging",
+    "included",
+    "restored",
+    "sweet",
+    "engrossed",
+    "welcome",
+    "pleasant"
+   ],
+   "n_in_cell": 12
+  },
+  {
+   "valence": -1.0,
+   "arousal": 0.0,
+   "words": [
+    "mean",
+    "hateful",
+    "snubbed",
+    "exasperated",
+    "cruel",
+    "threatened",
+    "huffy",
+    "spurned",
+    "upset",
+    "slighted"
+   ],
+   "n_in_cell": 13
+  },
+  {
+   "valence": -0.8,
+   "arousal": 0.0,
+   "words": [
+    "sweaty",
+    "sarcastic",
+    "startled",
+    "flabbergasted"
+   ],
+   "n_in_cell": 4
+  },
+  {
+   "valence": -0.6,
+   "arousal": 0.0,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": -0.4,
+   "arousal": 0.0,
+   "words": [
+    "surprised",
+    "hungry",
+    "conceited"
+   ],
+   "n_in_cell": 3
+  },
+  {
+   "valence": -0.2,
+   "arousal": 0.0,
+   "words": [
+    "devious"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.0,
+   "arousal": 0.0,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.2,
+   "arousal": 0.0,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.4,
+   "arousal": 0.0,
+   "words": [
+    "humbled"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.6,
+   "arousal": 0.0,
+   "words": [
+    "cunning"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.8,
+   "arousal": 0.0,
+   "words": [
+    "spontaneous"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 1.0,
+   "arousal": 0.0,
+   "words": [
+    "refreshed",
+    "genial",
+    "dreamy",
+    "contented",
+    "supported",
+    "gracious",
+    "generous",
+    "blissful",
+    "accepted",
+    "content"
+   ],
+   "n_in_cell": 21
+  },
+  {
+   "valence": -1.0,
+   "arousal": -0.2,
+   "words": [
+    "rejected",
+    "galled",
+    "vexed",
+    "disgruntled",
+    "contemptuous",
+    "scornful",
+    "petulant",
+    "perturbed",
+    "snide",
+    "edgy"
+   ],
+   "n_in_cell": 17
+  },
+  {
+   "valence": -0.8,
+   "arousal": -0.2,
+   "words": [
+    "rushed",
+    "overawed",
+    "restless",
+    "sore"
+   ],
+   "n_in_cell": 4
+  },
+  {
+   "valence": -0.6,
+   "arousal": -0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": -0.4,
+   "arousal": -0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": -0.2,
+   "arousal": -0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.0,
+   "arousal": -0.2,
+   "words": [
+    "scheming",
+    "vigilant"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": 0.2,
+   "arousal": -0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.4,
+   "arousal": -0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.6,
+   "arousal": -0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.8,
+   "arousal": -0.2,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 1.0,
+   "arousal": -0.2,
+   "words": [
+    "agreeable",
+    "affable",
+    "receptive",
+    "heard",
+    "secure",
+    "healthy",
+    "relieved",
+    "friendly",
+    "healed",
+    "harmonious"
+   ],
+   "n_in_cell": 21
+  },
+  {
+   "valence": -1.0,
+   "arousal": -0.4,
+   "words": [
+    "appalled",
+    "crabby",
+    "stormy",
+    "hassled",
+    "alarmed",
+    "mocking",
+    "ignored",
+    "rattled",
+    "overlooked",
+    "anguished"
+   ],
+   "n_in_cell": 21
+  },
+  {
+   "valence": -0.8,
+   "arousal": -0.4,
+   "words": [
+    "shocked",
+    "manipulative",
+    "jittery",
+    "vain",
+    "overextended",
+    "overstretched",
+    "itchy"
+   ],
+   "n_in_cell": 7
+  },
+  {
+   "valence": -0.6,
+   "arousal": -0.4,
+   "words": [
+    "hurried"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": -0.4,
+   "arousal": -0.4,
+   "words": [
+    "mixed",
+    "sly"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": -0.2,
+   "arousal": -0.4,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.0,
+   "arousal": -0.4,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.2,
+   "arousal": -0.4,
+   "words": [
+    "musing"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.4,
+   "arousal": -0.4,
+   "words": [
+    "sympathetic"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.6,
+   "arousal": -0.4,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.8,
+   "arousal": -0.4,
+   "words": [
+    "loose",
+    "aware",
+    "empathetic",
+    "expectant"
+   ],
+   "n_in_cell": 4
+  },
+  {
+   "valence": 1.0,
+   "arousal": -0.4,
+   "words": [
+    "floating",
+    "cosy",
+    "unburdened",
+    "at-ease",
+    "trustful",
+    "protected",
+    "hospitable",
+    "charitable",
+    "snuggly",
+    "confident"
+   ],
+   "n_in_cell": 27
+  },
+  {
+   "valence": -1.0,
+   "arousal": -0.6,
+   "words": [
+    "sulky",
+    "dissatisfied",
+    "grouchy",
+    "griping",
+    "disturbed",
+    "tortured",
+    "sour",
+    "alienated",
+    "distrustful",
+    "discontent"
+   ],
+   "n_in_cell": 39
+  },
+  {
+   "valence": -0.8,
+   "arousal": -0.6,
+   "words": [
+    "thirsty",
+    "sensitive",
+    "overcommitted",
+    "serious",
+    "torn",
+    "overworked",
+    "needy",
+    "longing",
+    "jumpy",
+    "affected"
+   ],
+   "n_in_cell": 10
+  },
+  {
+   "valence": -0.6,
+   "arousal": -0.6,
+   "words": [
+    "sneaky"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": -0.4,
+   "arousal": -0.6,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": -0.2,
+   "arousal": -0.6,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.0,
+   "arousal": -0.6,
+   "words": [
+    "absorbed"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.2,
+   "arousal": -0.6,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.4,
+   "arousal": -0.6,
+   "words": [
+    "thinking",
+    "spellbound"
+   ],
+   "n_in_cell": 2
+  },
+  {
+   "valence": 0.6,
+   "arousal": -0.6,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.8,
+   "arousal": -0.6,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 1.0,
+   "arousal": -0.6,
+   "words": [
+    "untroubled",
+    "present",
+    "cool",
+    "unencumbered",
+    "nurturing",
+    "assured",
+    "peaceful",
+    "easy",
+    "pacified",
+    "airy"
+   ],
+   "n_in_cell": 45
+  },
+  {
+   "valence": -1.0,
+   "arousal": -0.8,
+   "words": [
+    "distraught",
+    "disillusioned",
+    "keening",
+    "sickened",
+    "moody",
+    "orphaned",
+    "disappointed",
+    "bummed",
+    "broken",
+    "inferior"
+   ],
+   "n_in_cell": 77
+  },
+  {
+   "valence": -0.8,
+   "arousal": -0.8,
+   "words": [
+    "floppy",
+    "puzzled",
+    "stiff",
+    "unsure",
+    "confused",
+    "distracted",
+    "questioning",
+    "fidgety",
+    "dependent",
+    "disconnected"
+   ],
+   "n_in_cell": 22
+  },
+  {
+   "valence": -0.6,
+   "arousal": -0.8,
+   "words": [
+    "undecided",
+    "drifting",
+    "bemused",
+    "pondering",
+    "distant"
+   ],
+   "n_in_cell": 5
+  },
+  {
+   "valence": -0.4,
+   "arousal": -0.8,
+   "words": [
+    "watchful"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": -0.2,
+   "arousal": -0.8,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.0,
+   "arousal": -0.8,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.2,
+   "arousal": -0.8,
+   "words": [
+    "calculating"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.4,
+   "arousal": -0.8,
+   "words": [],
+   "n_in_cell": 0
+  },
+  {
+   "valence": 0.6,
+   "arousal": -0.8,
+   "words": [
+    "analytical"
+   ],
+   "n_in_cell": 1
+  },
+  {
+   "valence": 0.8,
+   "arousal": -0.8,
+   "words": [
+    "weightless",
+    "reflective",
+    "humble",
+    "unconcerned"
+   ],
+   "n_in_cell": 4
+  },
+  {
+   "valence": 1.0,
+   "arousal": -0.8,
+   "words": [
+    "normal",
+    "sage",
+    "regular",
+    "calm",
+    "gentle",
+    "unworried",
+    "placid",
+    "dignified",
+    "limber",
+    "logical"
+   ],
+   "n_in_cell": 45
+  },
+  {
+   "valence": -1.0,
+   "arousal": -1.0,
+   "words": [
+    "depressed",
+    "pitiful",
+    "mournful",
+    "melancholy",
+    "mourning",
+    "melancholic",
+    "sorrowful",
+    "morose",
+    "forlorn",
+    "self-pitying"
+   ],
+   "n_in_cell": 145
+  },
+  {
+   "valence": -0.8,
+   "arousal": -1.0,
+   "words": [
+    "sheepish",
+    "fatalistic",
+    "frozen",
+    "lachrymose",
+    "uninspired",
+    "somber",
+    "invisible",
+    "empty",
+    "leaden",
+    "guarded"
+   ],
+   "n_in_cell": 21
+  },
+  {
+   "valence": -0.6,
+   "arousal": -1.0,
+   "words": [
+    "solemn",
+    "lethargic",
+    "withdrawn",
+    "reclusive",
+    "limp",
+    "purposeless",
+    "bored",
+    "insignificant",
+    "delicate"
+   ],
+   "n_in_cell": 9
+  },
+  {
+   "valence": -0.4,
+   "arousal": -1.0,
+   "words": [
+    "catatonic",
+    "deadened",
+    "blah",
+    "lazy",
+    "solitary",
+    "timid",
+    "somnolent",
+    "vacant",
+    "shy"
+   ],
+   "n_in_cell": 9
+  },
+  {
+   "valence": -0.2,
+   "arousal": -1.0,
+   "words": [
+    "stagnant",
+    "spacey",
+    "lifeless",
+    "dull",
+    "resigned",
+    "apathetic",
+    "introspective",
+    "dozy",
+    "hermitic"
+   ],
+   "n_in_cell": 9
+  },
+  {
+   "valence": 0.0,
+   "arousal": -1.0,
+   "words": [
+    "flat",
+    "tepid",
+    "sleepy",
+    "uncommitted",
+    "subdued",
+    "comatose"
+   ],
+   "n_in_cell": 6
+  },
+  {
+   "valence": 0.2,
+   "arousal": -1.0,
+   "words": [
+    "reserved",
+    "indifferent",
+    "numb",
+    "blas\u00e9",
+    "introverted",
+    "muted",
+    "aloof",
+    "lukewarm",
+    "ambivalent",
+    "languid"
+   ],
+   "n_in_cell": 13
+  },
+  {
+   "valence": 0.4,
+   "arousal": -1.0,
+   "words": [
+    "idle",
+    "nonplussed",
+    "disinterested",
+    "inert",
+    "detached",
+    "lulled",
+    "absentminded",
+    "sedentary"
+   ],
+   "n_in_cell": 8
+  },
+  {
+   "valence": 0.6,
+   "arousal": -1.0,
+   "words": [
+    "sedate",
+    "meek",
+    "contemplative",
+    "noncommittal",
+    "impassive",
+    "quiet",
+    "languorous",
+    "unmoved",
+    "soft",
+    "drowsy"
+   ],
+   "n_in_cell": 10
+  },
+  {
+   "valence": 0.8,
+   "arousal": -1.0,
+   "words": [
+    "stoical",
+    "dispassionate",
+    "ordinary",
+    "restrained",
+    "passive",
+    "stoic",
+    "blase",
+    "unemotional"
+   ],
+   "n_in_cell": 8
+  },
+  {
+   "valence": 1.0,
+   "arousal": -1.0,
+   "words": [
+    "businesslike",
+    "sober",
+    "neutral",
+    "sacred",
+    "controlled",
+    "modest",
+    "moderate",
+    "matter-of-fact",
+    "still",
+    "unaffected"
+   ],
+   "n_in_cell": 17
+  }
+ ]
+}

@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Affect Adjective Map</title>
+<style>
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6b6b70;
+  --faint: #d9d7d2;
+  --grid: #e8e6e1;
+  --accent: #3b5bdb;
+  --accent-ink: #ffffff;
+  --chip: #f0efeb;
+  --chip-on: #3b5bdb;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --pos: #2f9e6b;
+  --neg: #d9485f;
+  --dot-l: 52%;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141416;
+    --surface: #1e1e22;
+    --ink: #ececef;
+    --muted: #9b9ba3;
+    --faint: #3a3a40;
+    --grid: #2a2a2f;
+    --accent: #7c95ff;
+    --accent-ink: #0e0e10;
+    --chip: #2a2a30;
+    --chip-on: #7c95ff;
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    --dot-l: 62%;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141416;
+  --surface: #1e1e22;
+  --ink: #ececef;
+  --muted: #9b9ba3;
+  --faint: #3a3a40;
+  --grid: #2a2a2f;
+  --accent: #7c95ff;
+  --accent-ink: #0e0e10;
+  --chip: #2a2a30;
+  --chip-on: #7c95ff;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --dot-l: 62%;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: 24px 16px 120px;
+}
+main { max-width: 760px; margin: 0 auto; }
+header h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+header p { margin: 0 0 16px; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 12px; color: var(--muted); font-size: 14px; }
+.controls label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.plot-wrap { background: var(--surface); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0,0,0,.06); padding: 8px; }
+svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
+.axis { stroke: var(--faint); stroke-width: 1; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.ring { fill: none; stroke: var(--faint); stroke-dasharray: 3 4; }
+.lbl { fill: var(--muted); font-size: 12px; }
+.corner { fill: var(--muted); font-size: 12px; font-style: italic; opacity: .8; }
+.axis-title { fill: var(--ink); font-size: 13px; font-weight: 600; }
+.hit { fill: transparent; cursor: pointer; outline: none; }
+.hit:focus-visible + .dot { stroke: var(--accent); stroke-width: 3; }
+.dot { pointer-events: none; stroke: var(--surface); stroke-width: 1.5; transition: r .12s; }
+.dot.empty { fill: none; stroke: var(--faint); stroke-width: 1; }
+.dot.hl { stroke: var(--ink); stroke-width: 2; }
+.dot.has-sel { stroke: var(--accent); stroke-width: 2.5; }
+.word-dot { pointer-events: none; opacity: .35; }
+#tip {
+  position: fixed; z-index: 10; pointer-events: none; max-width: 260px;
+  background: var(--surface); color: var(--ink); border-radius: 8px; box-shadow: var(--shadow);
+  padding: 8px 10px; font-size: 13px; opacity: 0; transition: opacity .1s;
+}
+#tip.show { opacity: 1; }
+#tip .h { color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+#tip .w { line-height: 1.5; }
+#tip .more { color: var(--muted); font-size: 12px; margin-top: 2px; }
+dialog {
+  border: 0; border-radius: 14px; padding: 0; width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px); background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
+}
+dialog::backdrop { background: rgba(0, 0, 0, .35); }
+.dlg { display: flex; flex-direction: column; max-height: calc(100vh - 48px); }
+.dlg-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; padding: 16px 18px 8px; }
+.dlg-head h2 { margin: 0; font-size: 17px; }
+.dlg-head .sub { color: var(--muted); font-size: 13px; }
+.dlg-body { padding: 4px 18px 8px; overflow-y: auto; }
+.dlg-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; padding: 12px 18px 16px; border-top: 1px solid var(--grid); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  border: 1px solid transparent; background: var(--chip); color: var(--ink); border-radius: 999px;
+  padding: 4px 11px; font: inherit; font-size: 14px; cursor: pointer;
+}
+.chip:hover { border-color: var(--faint); }
+.chip[aria-pressed="true"] { background: var(--chip-on); color: var(--accent-ink); }
+.chip small { opacity: .6; font-size: 11px; margin-left: 4px; }
+.empty-note { color: var(--muted); font-size: 14px; }
+button.btn {
+  font: inherit; font-size: 14px; border-radius: 8px; padding: 6px 12px; cursor: pointer;
+  border: 1px solid var(--faint); background: transparent; color: var(--ink);
+}
+button.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+button.btn:disabled { opacity: .45; cursor: default; }
+button.icon { border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 2px 6px; }
+.linkish { border: 0; background: none; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; padding: 6px 0 0; }
+.group { display: flex; gap: 8px; flex-wrap: wrap; }
+#tray {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--surface);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.08); padding: 10px 16px; transform: translateY(110%); transition: transform .18s;
+}
+#tray.show { transform: none; }
+.tray-in { max-width: 760px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tray-words { flex: 1 1 260px; display: flex; gap: 4px; flex-wrap: wrap; max-height: 64px; overflow-y: auto; }
+.tray-words .chip { font-size: 13px; padding: 2px 8px; }
+select { font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--faint); background: var(--surface); color: var(--ink); }
+#toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg);
+  padding: 6px 12px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 20;
+}
+#toast.show { opacity: 1; }
+footer { color: var(--muted); font-size: 12px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Affect adjective map</h1>
+    <p>Adjectives placed in the valence × arousal space by Sentiment2D. Hover a point to preview its words; click to pick words and copy them.</p>
+  </header>
+  <div class="controls">
+    <label><input type="checkbox" id="showWords"> Show every word's position</label>
+    <label><input type="checkbox" id="showEmpty" checked> Show empty points</label>
+    <span id="summary"></span>
+  </div>
+  <div class="plot-wrap"><svg id="plot" role="img" aria-label="Valence by arousal grid of adjectives"></svg></div>
+  <footer id="foot"></footer>
+</main>
+
+<div id="tip" role="tooltip"></div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <div>
+        <h2 id="dlgTitle"></h2>
+        <div class="sub" id="dlgSub"></div>
+      </div>
+      <button class="icon" id="dlgClose" aria-label="Close">×</button>
+    </div>
+    <div class="dlg-body">
+      <div class="chips" id="dlgChips"></div>
+      <button class="linkish" id="dlgMore" hidden></button>
+    </div>
+    <div class="dlg-foot">
+      <div class="group">
+        <button class="btn" id="dlgAll">Select shown</button>
+        <button class="btn" id="dlgNone">Clear</button>
+      </div>
+      <div class="group">
+        <button class="btn primary" id="dlgCopy">Copy selected</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div id="tray" aria-live="polite">
+  <div class="tray-in">
+    <strong id="trayCount"></strong>
+    <div class="tray-words" id="trayWords"></div>
+    <select id="fmt" aria-label="Copy format">
+      <option value="comma">word, word</option>
+      <option value="lines">one per line</option>
+      <option value="json">JSON array</option>
+    </select>
+    <button class="btn primary" id="trayCopy">Copy all</button>
+    <button class="btn" id="trayClear">Clear</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script id="grid-data" type="application/json">{"spacing":0.2,"layout":"points","rank":"distance","k":10,"template":"I feel {}.","cells":[{"v":-1.0,"a":1.0,"words":[["raging",-0.983,0.983],["aggressive",-0.986,0.981],["rabid",-0.978,0.974],["rowdy",-0.973,0.975],["ferocious",-0.974,0.972],["riled",-0.986,0.964],["furious",-0.99,0.959],["rebellious",-0.971,0.968],["enraged",-0.989,0.955],["heated",-0.964,0.965],["fierce",-0.95,0.966],["belligerent",-0.984,0.941],["outraged",-0.99,0.935],["raucous",-0.927,0.974],["feisty",-0.928,0.959],["defiant",-0.939,0.941],["incensed",-0.989,0.91]]},{"v":-0.8,"a":1.0,"words":[["explosive",-0.797,0.961],["piqued",-0.859,0.94],["frenzied",-0.871,0.954],["rambunctious",-0.741,0.916]]},{"v":-0.6,"a":1.0,"words":[["charged",-0.56,0.938],["hot",-0.58,0.91]]},{"v":-0.4,"a":1.0,"words":[["zealous",-0.413,0.908]]},{"v":-0.2,"a":1.0,"words":[["wild",-0.213,0.969]]},{"v":0.0,"a":1.0,"words":[["aroused",-0.062,0.939]]},{"v":0.2,"a":1.0,"words":[["passionate",0.254,0.904]]},{"v":0.4,"a":1.0,"words":[["manic",0.375,0.948]]},{"v":0.6,"a":1.0,"words":[["flushed",0.649,0.951],["boisterous",0.514,0.966]]},{"v":0.8,"a":1.0,"words":[["hyper",0.755,0.951],["amped",0.865,0.976],["electrified",0.868,0.947],["animated",0.87,0.942],["fervent",0.869,0.912],["awakened",0.891,0.91]]},{"v":1.0,"a":1.0,"words":[["giddy",0.994,0.988],["ecstatic",0.995,0.986],["jubilant",0.993,0.984],["exultant",0.993,0.983],["exuberant",0.991,0.983],["overjoyed",0.993,0.982],["enthusiastic",0.99,0.98],["excited",0.989,0.981],["gleeful",0.992,0.977],["elated",0.992,0.977],["peppy",0.992,0.976],["hyped",0.987,0.978],["fizzy",0.99,0.976],["zestful",0.989,0.976],["thrilled",0.994,0.974],["bubbly",0.992,0.974],["lively",0.987,0.975],["stoked",0.991,0.973],["pumped",0.985,0.974],["euphoric",0.994,0.969],["effervescent",0.988,0.971],["triumphant",0.991,0.969],["exhilarated",0.983,0.972],["joyous",0.994,0.967],["tickled",0.988,0.968],["triumphal",0.991,0.967],["psyched",0.992,0.965],["bouncy",0.986,0.966],["amorous",0.981,0.968],["joyful",0.993,0.962],["vibrant",0.987,0.962],["delighted",0.994,0.96],["vivacious",0.984,0.961],["celebratory",0.993,0.958],["eager",0.975,0.965],["laughing",0.975,0.963],["frisky",0.976,0.961],["energetic",0.978,0.959],["glowing",0.993,0.952],["victorious",0.992,0.952],["rapturous",0.988,0.951],["tingly",0.969,0.954],["festive",0.992,0.945],["overexcited",0.953,0.97],["invigorated",0.973,0.951],["smitten",0.964,0.954],["energized",0.965,0.951],["beaming",0.993,0.94],["heady",0.95,0.963],["amused",0.978,0.941],["lovestruck",0.969,0.945],["playful",0.975,0.94],["bright",0.99,0.933],["spirited",0.938,0.962],["glorious",0.994,0.927],["zippy",0.966,0.929],["radiant",0.993,0.92],["alive",0.984,0.91],["stimulated",0.935,0.935],["dazzled",0.95,0.921],["merry",0.994,0.902],["infatuated",0.927,0.912],["hilarious",0.917,0.905],["vigorous",0.91,0.909]]},{"v":-1.0,"a":0.8,"words":[["infuriated",-0.99,0.801],["offended",-0.99,0.82],["indignant",-0.987,0.77],["vengeful",-0.985,0.834],["impatient",-0.958,0.79],["irate",-0.99,0.855],["combative",-0.971,0.853],["crazed",-0.97,0.856],["ruthless",-0.955,0.755],["livid",-0.992,0.868],["mad",-0.989,0.871],["agitated",-0.985,0.872],["angry",-0.983,0.889]]},{"v":-0.8,"a":0.8,"words":[["headstrong",-0.766,0.834],["hysterical",-0.817,0.849],["greedy",-0.742,0.793],["reckless",-0.741,0.759],["arrogant",-0.896,0.871]]},{"v":-0.6,"a":0.8,"words":[["jealous",-0.611,0.782],["frenetic",-0.624,0.84],["loud",-0.592,0.875]]},{"v":-0.4,"a":0.8,"words":[]},{"v":-0.2,"a":0.8,"words":[]},{"v":0.0,"a":0.8,"words":[["sharp",0.068,0.825]]},{"v":0.2,"a":0.8,"words":[["hyperactive",0.133,0.889]]},{"v":0.4,"a":0.8,"words":[["wired",0.334,0.798],["stirred",0.306,0.878]]},{"v":0.6,"a":0.8,"words":[["daring",0.632,0.711],["expressive",0.683,0.734]]},{"v":0.8,"a":0.8,"words":[["envious",0.784,0.803],["lovesick",0.815,0.807],["intoxicated",0.803,0.828],["dynamic",0.824,0.766],["ambitious",0.843,0.798],["cocky",0.751,0.78],["emotional",0.747,0.786],["bold",0.738,0.812],["mischievous",0.785,0.737],["awestruck",0.839,0.736],["amazed",0.774,0.709],["ardent",0.821,0.894],["courageous",0.888,0.746],["quick",0.727,0.718],["flirtatious",0.863,0.704]]},{"v":1.0,"a":0.8,"words":[["wonderful",0.996,0.795],["splendid",0.993,0.803],["buoyant",0.992,0.801],["pleased",0.993,0.795],["hearty",0.99,0.799],["encouraged",0.99,0.819],["entertained",0.979,0.807],["magnificent",0.988,0.821],["successful",0.99,0.823],["upbeat",0.993,0.774],["smiling",0.989,0.773],["marvelous",0.993,0.768],["optimistic",0.989,0.832],["terrific",0.994,0.764],["fantastic",0.996,0.762],["fulfilled",0.995,0.761],["happy",0.991,0.758],["thankful",0.988,0.758],["accomplished",0.983,0.755],["marvellous",0.989,0.751],["gregarious",0.969,0.761],["smug",0.966,0.837],["hopeful",0.982,0.849],["jolly",0.992,0.855],["great",0.995,0.744],["revitalized",0.985,0.745],["gratified",0.988,0.86],["enchanted",0.97,0.746],["illuminated",0.976,0.857],["grateful",0.987,0.738],["renewed",0.986,0.862],["lovely",0.994,0.736],["impressed",0.935,0.824],["sentimental",0.93,0.803],["agile",0.93,0.78],["loved",0.987,0.728],["inspired",0.938,0.84],["proud",0.984,0.874],["productive",0.956,0.728],["outgoing",0.965,0.878],["touched",0.94,0.861],["vital",0.917,0.821],["chatty",0.923,0.838],["powerful",0.909,0.811],["empowered",0.958,0.717],["sparkling",0.991,0.894],["robust",0.965,0.711],["blessed",0.992,0.705],["perky",0.991,0.705],["adventurous",0.914,0.844],["nimble",0.934,0.726],["sexy",0.944,0.885],["moved",0.932,0.878],["keen",0.951,0.894],["motivated",0.906,0.869],["superior",0.906,0.717],["fearless",0.904,0.716]]},{"v":-1.0,"a":0.6,"words":[["hostile",-0.987,0.604],["testy",-0.984,0.625],["cross",-0.987,0.571],["snappy",-0.975,0.574],["aggravated",-0.988,0.647],["irritated",-0.976,0.554],["seething",-0.992,0.536],["affronted",-0.991,0.665],["tempestuous",-0.937,0.572],["fuming",-0.992,0.675],["vindictive",-0.988,0.686],["frantic",-0.921,0.548],["murderous",-0.99,0.7]]},{"v":-0.8,"a":0.6,"words":[["thunderstruck",-0.838,0.582],["noisy",-0.865,0.633]]},{"v":-0.6,"a":0.6,"words":[["possessive",-0.64,0.577]]},{"v":-0.4,"a":0.6,"words":[]},{"v":-0.2,"a":0.6,"words":[["covetous",-0.291,0.697]]},{"v":0.0,"a":0.6,"words":[["driven",-0.003,0.622],["astounded",0.009,0.648],["entitled",0.073,0.672]]},{"v":0.2,"a":0.6,"words":[]},{"v":0.4,"a":0.6,"words":[["busy",0.477,0.511]]},{"v":0.6,"a":0.6,"words":[["brisk",0.652,0.584]]},{"v":0.8,"a":0.6,"words":[["assertive",0.775,0.614],["fascinated",0.739,0.597],["interested",0.856,0.635],["talkative",0.846,0.547],["awed",0.85,0.689],["captivated",0.876,0.687]]},{"v":1.0,"a":0.6,"words":[["superb",0.99,0.603],["good",0.995,0.58],["cheerful",0.992,0.62],["lucky",0.991,0.627],["appreciated",0.981,0.579],["cheery",0.992,0.567],["fortunate",0.99,0.555],["spry",0.976,0.557],["excellent",0.994,0.654],["warm",0.981,0.652],["nostalgic",0.942,0.582],["strong",0.946,0.631],["jovial",0.992,0.664],["nice",0.991,0.533],["appreciative",0.973,0.534],["adoring",0.96,0.501]]},{"v":-1.0,"a":0.4,"words":[["insulted",-0.989,0.406],["spiteful",-0.987,0.409],["savage",-0.983,0.405],["wronged",-0.982,0.435],["unruly",-0.956,0.405],["vicious",-0.977,0.455],["annoyed",-0.972,0.328],["temperamental",-0.943,0.345],["prickly",-0.978,0.479],["volatile",-0.918,0.4]]},{"v":-0.8,"a":0.4,"words":[["antsy",-0.874,0.365],["haughty",-0.736,0.478]]},{"v":-0.6,"a":0.4,"words":[]},{"v":-0.4,"a":0.4,"words":[["overstimulated",-0.333,0.41],["astonished",-0.317,0.403],["willful",-0.407,0.484]]},{"v":-0.2,"a":0.4,"words":[]},{"v":0.0,"a":0.4,"words":[]},{"v":0.2,"a":0.4,"words":[]},{"v":0.4,"a":0.4,"words":[["riveted",0.4,0.419]]},{"v":0.6,"a":0.4,"words":[["intrigued",0.57,0.382],["wistful",0.574,0.454],["determined",0.511,0.43]]},{"v":0.8,"a":0.4,"words":[["alert",0.808,0.463]]},{"v":1.0,"a":0.4,"words":[["chipper",0.994,0.41],["sunny",0.994,0.412],["nourished",0.985,0.41],["validated",0.983,0.41],["romantic",0.98,0.397],["heavenly",0.996,0.422],["engaged",0.967,0.376],["sprightly",0.987,0.446],["valued",0.975,0.358],["rejuvenated",0.988,0.348],["liberated",0.98,0.344],["satisfied",0.994,0.462],["transcendent",0.95,0.359],["loving",0.981,0.464],["cherished",0.984,0.466],["affectionate",0.939,0.431],["awake",0.914,0.412],["full",0.99,0.487],["welcomed",0.99,0.312],["admired",0.951,0.479],["brave",0.902,0.41],["entranced",0.921,0.306]]},{"v":-1.0,"a":0.2,"words":[["revolted",-0.991,0.201],["cheated",-0.99,0.207],["violated",-0.978,0.184],["deranged",-0.983,0.166],["displeased",-0.985,0.152],["rude",-0.973,0.253],["jilted",-0.988,0.267],["harassed",-0.977,0.135],["resentful",-0.982,0.277],["betrayed",-0.987,0.28],["irritable",-0.967,0.122],["cranky",-0.988,0.286],["unhinged",-0.944,0.282],["obstinate",-0.91,0.113]]},{"v":-0.8,"a":0.2,"words":[["hectic",-0.725,0.195],["stubborn",-0.823,0.291],["raw",-0.894,0.109]]},{"v":-0.6,"a":0.2,"words":[["gobsmacked",-0.639,0.113]]},{"v":-0.4,"a":0.2,"words":[["impulsive",-0.478,0.152]]},{"v":-0.2,"a":0.2,"words":[]},{"v":0.0,"a":0.2,"words":[]},{"v":0.2,"a":0.2,"words":[["yearning",0.155,0.165]]},{"v":0.4,"a":0.2,"words":[["curious",0.476,0.263]]},{"v":0.6,"a":0.2,"words":[["inquisitive",0.5,0.216]]},{"v":0.8,"a":0.2,"words":[]},{"v":1.0,"a":0.2,"words":[["mended",0.979,0.204],["devoted",0.965,0.188],["free",0.984,0.246],["belonging",0.976,0.245],["included",0.981,0.249],["restored",0.991,0.139],["sweet",0.987,0.269],["engrossed",0.927,0.229],["welcome",0.985,0.282],["pleasant",0.994,0.112],["anticipating",0.903,0.189],["noble",0.962,0.11]]},{"v":-1.0,"a":0.0,"words":[["mean",-0.98,-0.009],["hateful",-0.987,-0.034],["snubbed",-0.99,-0.038],["exasperated",-0.968,-0.031],["cruel",-0.982,-0.049],["threatened",-0.969,0.043],["huffy",-0.987,0.057],["spurned",-0.992,-0.064],["upset",-0.975,-0.07],["slighted",-0.975,0.071],["misunderstood",-0.914,-0.022],["frustrated",-0.963,-0.099],["twitchy",-0.917,-0.087]]},{"v":-0.8,"a":0.0,"words":[["sweaty",-0.785,0.031],["sarcastic",-0.849,-0.021],["startled",-0.804,0.055],["flabbergasted",-0.708,0.001]]},{"v":-0.6,"a":0.0,"words":[]},{"v":-0.4,"a":0.0,"words":[["surprised",-0.389,0.019],["hungry",-0.433,-0.065],["conceited",-0.433,-0.092]]},{"v":-0.2,"a":0.0,"words":[["devious",-0.177,-0.076]]},{"v":0.0,"a":0.0,"words":[]},{"v":0.2,"a":0.0,"words":[]},{"v":0.4,"a":0.0,"words":[["humbled",0.486,-0.048]]},{"v":0.6,"a":0.0,"words":[["cunning",0.572,-0.006]]},{"v":0.8,"a":0.0,"words":[["spontaneous",0.862,-0.018]]},{"v":1.0,"a":0.0,"words":[["refreshed",0.991,0.001],["genial",0.993,-0.013],["dreamy",0.987,-0.006],["contented",0.997,-0.02],["supported",0.979,0.006],["gracious",0.986,-0.023],["generous",0.975,-0.009],["blissful",0.997,0.027],["accepted",0.979,0.019],["content",0.997,-0.036],["sublime",0.986,0.037],["well",0.995,-0.04],["ready",0.954,-0.006],["enlightened",0.976,-0.042],["fit",0.984,0.053],["sincere",0.946,-0.05],["whole",0.992,-0.083],["connected",0.971,0.09],["capable",0.961,-0.087],["tender",0.933,0.096],["daydreaming",0.907,-0.086]]},{"v":-1.0,"a":-0.2,"words":[["rejected",-0.985,-0.21],["galled",-0.994,-0.179],["vexed",-0.985,-0.222],["disgruntled",-0.99,-0.171],["contemptuous",-0.979,-0.232],["scornful",-0.981,-0.165],["petulant",-0.958,-0.217],["perturbed",-0.969,-0.15],["snide",-0.971,-0.146],["edgy",-0.938,-0.204],["disdainful",-0.975,-0.258],["merciless",-0.977,-0.14],["struck",-0.934,-0.167],["wounded",-0.98,-0.28],["flustered",-0.914,-0.221],["hunted",-0.984,-0.294],["pressured",-0.91,-0.245]]},{"v":-0.8,"a":-0.2,"words":[["rushed",-0.847,-0.171],["overawed",-0.851,-0.266],["restless",-0.886,-0.165],["sore",-0.899,-0.163]]},{"v":-0.6,"a":-0.2,"words":[]},{"v":-0.4,"a":-0.2,"words":[]},{"v":-0.2,"a":-0.2,"words":[]},{"v":0.0,"a":-0.2,"words":[["scheming",0.001,-0.231],["vigilant",-0.073,-0.253]]},{"v":0.2,"a":-0.2,"words":[]},{"v":0.4,"a":-0.2,"words":[]},{"v":0.6,"a":-0.2,"words":[]},{"v":0.8,"a":-0.2,"words":[]},{"v":1.0,"a":-0.2,"words":[["agreeable",0.992,-0.182],["affable",0.987,-0.182],["receptive",0.971,-0.197],["heard",0.973,-0.214],["secure",0.99,-0.231],["healthy",0.993,-0.162],["relieved",0.989,-0.16],["friendly",0.98,-0.259],["healed",0.99,-0.268],["harmonious",0.995,-0.271],["worshipful",0.966,-0.265],["sociable",0.973,-0.269],["open",0.949,-0.146],["respected",0.965,-0.134],["loyal",0.956,-0.139],["cozy",0.991,-0.278],["carefree",0.996,-0.11],["seen",0.965,-0.116],["snug",0.97,-0.11],["independent",0.955,-0.291],["competent",0.977,-0.3]]},{"v":-1.0,"a":-0.4,"words":[["appalled",-0.985,-0.389],["crabby",-0.993,-0.44],["stormy",-0.991,-0.358],["hassled",-0.972,-0.438],["alarmed",-0.951,-0.39],["mocking",-0.956,-0.362],["ignored",-0.979,-0.344],["rattled",-0.956,-0.452],["overlooked",-0.973,-0.327],["anguished",-0.983,-0.477],["defensive",-0.919,-0.397],["excluded",-0.975,-0.323],["panicked",-0.934,-0.453],["hurt",-0.969,-0.315],["unsatisfied",-0.967,-0.489],["petty",-0.962,-0.312],["ostracized",-0.974,-0.306],["overloaded",-0.909,-0.447],["underappreciated",-0.95,-0.305],["contrite",-0.931,-0.316],["tense",-0.923,-0.32]]},{"v":-0.8,"a":-0.4,"words":[["shocked",-0.812,-0.407],["manipulative",-0.816,-0.391],["jittery",-0.801,-0.379],["vain",-0.831,-0.41],["overextended",-0.775,-0.444],["overstretched",-0.74,-0.428],["itchy",-0.878,-0.346]]},{"v":-0.6,"a":-0.4,"words":[["hurried",-0.676,-0.472]]},{"v":-0.4,"a":-0.4,"words":[["mixed",-0.443,-0.424],["sly",-0.311,-0.454]]},{"v":-0.2,"a":-0.4,"words":[]},{"v":0.0,"a":-0.4,"words":[]},{"v":0.2,"a":-0.4,"words":[["musing",0.235,-0.364]]},{"v":0.4,"a":-0.4,"words":[["sympathetic",0.399,-0.403]]},{"v":0.6,"a":-0.4,"words":[]},{"v":0.8,"a":-0.4,"words":[["loose",0.828,-0.447],["aware",0.878,-0.444],["empathetic",0.876,-0.347],["expectant",0.88,-0.35]]},{"v":1.0,"a":-0.4,"words":[["floating",0.991,-0.406],["cosy",0.99,-0.394],["unburdened",0.981,-0.405],["at-ease",0.993,-0.425],["trustful",0.973,-0.396],["protected",0.979,-0.38],["hospitable",0.988,-0.433],["charitable",0.958,-0.405],["snuggly",0.989,-0.441],["confident",0.977,-0.355],["cuddly",0.989,-0.35],["recovered",0.977,-0.351],["sated",0.99,-0.343],["sovereign",0.954,-0.364],["angelic",0.995,-0.34],["compassionate",0.936,-0.391],["accepting",0.98,-0.475],["efficient",0.982,-0.322],["trusting",0.973,-0.476],["serene",0.994,-0.483],["consoled",0.991,-0.483],["lounging",0.992,-0.483],["sanguine",0.994,-0.493],["unified",0.978,-0.307],["uninhibited",0.979,-0.495],["understood",0.97,-0.306],["amiable",0.99,-0.301]]},{"v":-1.0,"a":-0.6,"words":[["sulky",-0.989,-0.606],["dissatisfied",-0.984,-0.583],["grouchy",-0.99,-0.631],["griping",-0.978,-0.575],["disturbed",-0.979,-0.568],["tortured",-0.98,-0.637],["sour",-0.988,-0.641],["alienated",-0.973,-0.562],["distrustful",-0.966,-0.632],["discontent",-0.983,-0.555],["displaced",-0.959,-0.628],["unwanted",-0.979,-0.552],["repulsed",-0.985,-0.651],["humiliated",-0.984,-0.549],["mistrustful",-0.964,-0.645],["disgusted",-0.989,-0.658],["estranged",-0.965,-0.553],["bothered",-0.962,-0.554],["grumpy",-0.989,-0.659],["nasty",-0.989,-0.664],["bitter",-0.993,-0.665],["harried",-0.942,-0.565],["discontented",-0.985,-0.533],["grumbling",-0.979,-0.666],["touchy",-0.925,-0.6],["unhappy",-0.986,-0.676],["tormented",-0.989,-0.677],["paranoid",-0.958,-0.667],["overwrought",-0.976,-0.676],["frazzled",-0.937,-0.651],["unloved",-0.986,-0.68],["cornered",-0.97,-0.68],["shaken",-0.947,-0.531],["abandoned",-0.987,-0.689],["sadistic",-0.944,-0.526],["uprooted",-0.932,-0.536],["complaining",-0.973,-0.51],["horrified",-0.978,-0.505],["mistrusted",-0.976,-0.501]]},{"v":-0.8,"a":-0.6,"words":[["thirsty",-0.802,-0.613],["sensitive",-0.78,-0.583],["overcommitted",-0.797,-0.638],["serious",-0.732,-0.576],["torn",-0.877,-0.565],["overworked",-0.845,-0.674],["needy",-0.89,-0.551],["longing",-0.726,-0.676],["jumpy",-0.879,-0.514],["affected",-0.886,-0.697]]},{"v":-0.6,"a":-0.6,"words":[["sneaky",-0.637,-0.568]]},{"v":-0.4,"a":-0.6,"words":[]},{"v":-0.2,"a":-0.6,"words":[]},{"v":0.0,"a":-0.6,"words":[["absorbed",0.003,-0.51]]},{"v":0.2,"a":-0.6,"words":[]},{"v":0.4,"a":-0.6,"words":[["thinking",0.464,-0.68],["spellbound",0.305,-0.653]]},{"v":0.6,"a":-0.6,"words":[]},{"v":0.8,"a":-0.6,"words":[]},{"v":1.0,"a":-0.6,"words":[["untroubled",0.996,-0.597],["present",0.99,-0.603],["cool",0.992,-0.607],["unencumbered",0.991,-0.611],["nurturing",0.986,-0.611],["assured",0.984,-0.61],["peaceful",0.995,-0.58],["easy",0.991,-0.619],["pacified",0.986,-0.623],["airy",0.992,-0.571],["holy",0.974,-0.615],["spiritual",0.975,-0.622],["wise",0.969,-0.571],["self-reliant",0.956,-0.601],["comforted",0.992,-0.644],["tranquil",0.994,-0.645],["reassured",0.992,-0.554],["restful",0.995,-0.647],["forgiving",0.959,-0.574],["settled",0.994,-0.55],["kind",0.987,-0.65],["self-assured",0.984,-0.548],["autonomous",0.973,-0.647],["caring",0.949,-0.576],["beatific",0.992,-0.656],["soothed",0.994,-0.543],["centred",0.99,-0.667],["light",0.995,-0.532],["laid-back",0.992,-0.671],["comfortable",0.991,-0.529],["leisurely",0.994,-0.681],["easygoing",0.993,-0.681],["clear",0.985,-0.68],["relaxed",0.994,-0.683],["fine",0.996,-0.514],["safe",0.987,-0.685],["rested",0.994,-0.687],["understanding",0.95,-0.673],["alright",0.993,-0.512],["benevolent",0.985,-0.69],["tolerant",0.98,-0.689],["okay",0.988,-0.509],["mellow",0.988,-0.692],["earnest",0.908,-0.623],["hale",0.993,-0.504]]},{"v":-1.0,"a":-0.8,"words":[["distraught",-0.99,-0.8],["disillusioned",-0.99,-0.811],["keening",-0.99,-0.812],["sickened",-0.986,-0.808],["moody",-0.985,-0.792],["orphaned",-0.983,-0.795],["disappointed",-0.988,-0.786],["bummed",-0.99,-0.816],["broken",-0.979,-0.802],["inferior",-0.975,-0.805],["troubled",-0.975,-0.805],["peevish",-0.987,-0.771],["distressed",-0.976,-0.823],["icy",-0.97,-0.819],["disconcerted",-0.972,-0.829],["panicky",-0.958,-0.814],["nettled",-0.99,-0.844],["wailing",-0.987,-0.748],["achy",-0.948,-0.814],["ill",-0.989,-0.855],["brooding",-0.985,-0.856],["overcome",-0.96,-0.845],["worthless",-0.991,-0.864],["quivering",-0.941,-0.83],["strained",-0.944,-0.765],["uptight",-0.933,-0.793],["trapped",-0.977,-0.866],["isolated",-0.936,-0.835],["sick",-0.984,-0.872],["unmoored",-0.949,-0.857],["powerless",-0.964,-0.868],["whining",-0.978,-0.874],["unanchored",-0.935,-0.841],["nauseated",-0.977,-0.874],["alone",-0.972,-0.872],["frightened",-0.952,-0.861],["overtired",-0.927,-0.827],["desperate",-0.961,-0.868],["heartsore",-0.991,-0.881],["useless",-0.98,-0.88],["disheartened",-0.992,-0.882],["unnerved",-0.961,-0.727],["forgotten",-0.966,-0.722],["shaky",-0.92,-0.832],["homeless",-0.991,-0.886],["wretched",-0.992,-0.886],["brittle",-0.976,-0.884],["shattered",-0.988,-0.713],["miserable",-0.993,-0.888],["wary",-0.931,-0.86],["sardonic",-0.965,-0.884],["uncomfortable",-0.94,-0.87],["overwhelmed",-0.955,-0.718],["neglected",-0.981,-0.708],["disoriented",-0.91,-0.774],["aching",-0.965,-0.711],["self-loathing",-0.992,-0.896],["spooked",-0.97,-0.707],["crushed",-0.992,-0.898],["sullen",-0.984,-0.897],["suspicious",-0.914,-0.752],["stressed",-0.931,-0.729],["exposed",-0.936,-0.724],["bewildered",-0.903,-0.823],["flummoxed",-0.97,-0.895],["queasy",-0.975,-0.897],["helpless",-0.964,-0.895],["stunned",-0.901,-0.837],["preoccupied",-0.921,-0.87],["scared",-0.942,-0.89],["dumbfounded",-0.906,-0.857],["perplexed",-0.903,-0.858],["uncertain",-0.908,-0.868],["shifty",-0.91,-0.877],["conflicted",-0.92,-0.711],["trembling",-0.909,-0.884],["remorseful",-0.925,-0.899]]},{"v":-0.8,"a":-0.8,"words":[["floppy",-0.806,-0.804],["puzzled",-0.816,-0.82],["stiff",-0.775,-0.79],["unsure",-0.836,-0.835],["confused",-0.845,-0.825],["distracted",-0.848,-0.827],["questioning",-0.816,-0.854],["fidgety",-0.832,-0.75],["dependent",-0.741,-0.83],["disconnected",-0.737,-0.834],["small",-0.784,-0.87],["wondering",-0.817,-0.875],["evasive",-0.789,-0.882],["baffled",-0.887,-0.773],["scatterbrained",-0.887,-0.835],["dizzy",-0.892,-0.829],["indecisive",-0.876,-0.868],["teary",-0.872,-0.877],["clingy",-0.896,-0.848],["breathless",-0.892,-0.867],["repentant",-0.888,-0.877],["awkward",-0.873,-0.892]]},{"v":-0.6,"a":-0.8,"words":[["undecided",-0.616,-0.828],["drifting",-0.58,-0.83],["bemused",-0.651,-0.843],["pondering",-0.648,-0.887],["distant",-0.672,-0.875]]},{"v":-0.4,"a":-0.8,"words":[["watchful",-0.451,-0.734]]},{"v":-0.2,"a":-0.8,"words":[]},{"v":0.0,"a":-0.8,"words":[]},{"v":0.2,"a":-0.8,"words":[["calculating",0.259,-0.857]]},{"v":0.4,"a":-0.8,"words":[]},{"v":0.6,"a":-0.8,"words":[["analytical",0.585,-0.885]]},{"v":0.8,"a":-0.8,"words":[["weightless",0.875,-0.765],["reflective",0.873,-0.852],["humble",0.881,-0.872],["unconcerned",0.87,-0.89]]},{"v":1.0,"a":-0.8,"words":[["normal",0.995,-0.804],["sage",0.99,-0.803],["regular",0.991,-0.792],["calm",0.99,-0.791],["gentle",0.991,-0.785],["unworried",0.982,-0.802],["placid",0.979,-0.801],["dignified",0.987,-0.782],["limber",0.992,-0.771],["logical",0.983,-0.828],["steady",0.993,-0.766],["even",0.992,-0.758],["unbothered",0.991,-0.756],["focused",0.989,-0.844],["objective",0.958,-0.819],["unfazed",0.989,-0.846],["collected",0.991,-0.846],["casual",0.99,-0.846],["composed",0.994,-0.847],["meditative",0.991,-0.848],["clearheaded",0.994,-0.85],["stable",0.995,-0.748],["prayerful",0.965,-0.759],["cordial",0.994,-0.745],["supple",0.991,-0.743],["practical",0.97,-0.85],["poised",0.989,-0.741],["mindful",0.991,-0.861],["attentive",0.979,-0.74],["patient",0.984,-0.863],["measured",0.977,-0.866],["unruffled",0.983,-0.871],["centered",0.994,-0.727],["lucid",0.994,-0.877],["balanced",0.995,-0.722],["philosophical",0.978,-0.722],["concentrated",0.968,-0.725],["graceful",0.992,-0.718],["disciplined",0.969,-0.879],["reverent",0.977,-0.715],["pragmatic",0.974,-0.886],["grounded",0.991,-0.894],["thoughtful",0.979,-0.893],["unhurried",0.989,-0.704],["typical",0.904,-0.732]]},{"v":-1.0,"a":-1.0,"words":[["depressed",-0.993,-0.994],["pitiful",-0.993,-0.993],["mournful",-0.991,-0.993],["melancholy",-0.99,-0.994],["mourning",-0.991,-0.992],["melancholic",-0.989,-0.994],["sorrowful",-0.99,-0.992],["morose",-0.989,-0.992],["forlorn",-0.99,-0.991],["self-pitying",-0.99,-0.99],["grieving",-0.99,-0.989],["mopey",-0.986,-0.994],["weeping",-0.989,-0.99],["foggy",-0.988,-0.989],["pathetic",-0.992,-0.985],["sad",-0.987,-0.988],["lamenting",-0.99,-0.986],["shell-shocked",-0.986,-0.99],["despairing",-0.992,-0.984],["lonesome",-0.99,-0.984],["brokenhearted",-0.991,-0.983],["weepy",-0.985,-0.988],["grief-stricken",-0.986,-0.986],["heartbroken",-0.99,-0.983],["cowardly",-0.988,-0.983],["bereaved",-0.99,-0.982],["mopish",-0.982,-0.989],["downcast",-0.98,-0.994],["dreary",-0.98,-0.992],["doleful",-0.987,-0.983],["dejected",-0.991,-0.98],["down",-0.988,-0.981],["funereal",-0.984,-0.983],["bereft",-0.992,-0.978],["glum",-0.977,-0.989],["suffering",-0.983,-0.98],["despondent",-0.992,-0.974],["deflated",-0.979,-0.982],["wimpy",-0.973,-0.991],["rueful",-0.985,-0.973],["lonely",-0.986,-0.973],["dazed",-0.971,-0.983],["squeamish",-0.982,-0.971],["sniffly",-0.977,-0.975],["heartsick",-0.992,-0.966],["pining",-0.976,-0.974],["weary",-0.978,-0.972],["blue",-0.983,-0.969],["timorous",-0.974,-0.974],["lugubrious",-0.99,-0.965],["torpid",-0.966,-0.988],["cold-hearted",-0.985,-0.967],["agonized",-0.984,-0.965],["widowed",-0.979,-0.967],["pained",-0.979,-0.966],["downhearted",-0.991,-0.961],["frail",-0.968,-0.976],["fearful",-0.976,-0.967],["low",-0.988,-0.96],["weak",-0.969,-0.971],["feeble",-0.961,-0.982],["hazy",-0.967,-0.97],["cold",-0.962,-0.975],["gloomy",-0.985,-0.957],["doubtful",-0.982,-0.957],["lost",-0.984,-0.955],["underwhelmed",-0.952,-0.991],["dour",-0.977,-0.956],["craven",-0.962,-0.968],["hopeless",-0.993,-0.95],["sluggish",-0.954,-0.978],["sapped",-0.975,-0.956],["pensive",-0.949,-0.991],["sickly",-0.988,-0.949],["dreading",-0.991,-0.947],["bashful",-0.948,-0.986],["faint",-0.963,-0.961],["chicken",-0.959,-0.965],["dispirited",-0.99,-0.946],["hollow",-0.948,-0.981],["defeated",-0.992,-0.945],["jaded",-0.98,-0.947],["gray",-0.944,-0.992],["debilitated",-0.985,-0.943],["regretful",-0.978,-0.945],["demoralized",-0.992,-0.941],["crying",-0.962,-0.953],["drained",-0.981,-0.942],["leery",-0.984,-0.941],["whimpering",-0.954,-0.959],["stuck",-0.971,-0.945],["heavy",-0.983,-0.938],["sombre",-0.936,-0.993],["discouraged",-0.992,-0.935],["embarrassed",-0.962,-0.946],["mortified",-0.982,-0.936],["woeful",-0.992,-0.934],["aimless",-0.956,-0.948],["dismal",-0.99,-0.93],["sobbing",-0.946,-0.954],["petrified",-0.978,-0.931],["bleak",-0.99,-0.928],["heartless",-0.942,-0.956],["grey",-0.927,-0.992],["chilly",-0.943,-0.954],["depleted",-0.987,-0.927],["insecure",-0.975,-0.93],["fatigued",-0.945,-0.946],["unworthy",-0.985,-0.922],["cagey",-0.946,-0.942],["shivering",-0.957,-0.931],["sorry",-0.949,-0.936],["tearful",-0.94,-0.94],["gutless",-0.923,-0.965],["devastated",-0.992,-0.914],["groggy",-0.92,-0.963],["crestfallen",-0.993,-0.912],["pessimistic",-0.99,-0.911],["afraid",-0.953,-0.924],["vulnerable",-0.948,-0.927],["homesick",-0.94,-0.934],["inadequate",-0.977,-0.913],["ashamed",-0.981,-0.91],["cynical",-0.991,-0.908],["adrift",-0.981,-0.91],["worried",-0.932,-0.936],["skeptical",-0.947,-0.922],["callous",-0.94,-0.924],["terrified",-0.961,-0.909],["spineless",-0.901,-0.99],["fragile",-0.962,-0.908],["forgetful",-0.911,-0.95],["dead",-0.909,-0.955],["burdened",-0.976,-0.901],["skittish",-0.942,-0.914],["tired",-0.922,-0.931],["apprehensive",-0.949,-0.907],["uneasy",-0.957,-0.903],["enervated",-0.918,-0.928],["unfulfilled",-0.935,-0.911],["exhausted",-0.933,-0.912],["guilty",-0.936,-0.905],["anxious",-0.932,-0.904],["lightheaded",-0.918,-0.907],["unmotivated",-0.901,-0.919]]},{"v":-0.8,"a":-1.0,"words":[["sheepish",-0.792,-0.979],["fatalistic",-0.817,-0.986],["frozen",-0.83,-0.976],["lachrymose",-0.755,-0.981],["uninspired",-0.785,-0.951],["somber",-0.857,-0.993],["invisible",-0.802,-0.934],["empty",-0.865,-0.974],["leaden",-0.721,-0.995],["guarded",-0.742,-0.946],["slow",-0.808,-0.92],["cautious",-0.765,-0.925],["secretive",-0.85,-0.926],["speechless",-0.888,-0.985],["listless",-0.708,-0.995],["meaningless",-0.704,-0.991],["unimpressed",-0.732,-0.916],["unenthusiastic",-0.899,-0.956],["hesitant",-0.863,-0.912],["nervous",-0.891,-0.92],["spent",-0.896,-0.906]]},{"v":-0.6,"a":-1.0,"words":[["solemn",-0.611,-0.995],["lethargic",-0.636,-0.994],["withdrawn",-0.624,-0.962],["reclusive",-0.64,-0.971],["limp",-0.656,-0.982],["purposeless",-0.558,-0.958],["bored",-0.679,-0.984],["insignificant",-0.687,-0.971],["delicate",-0.519,-0.903]]},{"v":-0.4,"a":-1.0,"words":[["catatonic",-0.403,-0.996],["deadened",-0.403,-0.995],["blah",-0.38,-0.995],["lazy",-0.441,-0.977],["solitary",-0.365,-0.942],["timid",-0.458,-0.961],["somnolent",-0.321,-0.995],["vacant",-0.482,-0.989],["shy",-0.434,-0.912]]},{"v":-0.2,"a":-1.0,"words":[["stagnant",-0.182,-0.994],["spacey",-0.18,-0.984],["lifeless",-0.228,-0.995],["dull",-0.234,-0.996],["resigned",-0.162,-0.995],["apathetic",-0.159,-0.995],["introspective",-0.159,-0.983],["dozy",-0.238,-0.955],["hermitic",-0.131,-0.994]]},{"v":0.0,"a":-1.0,"words":[["flat",-0.025,-0.995],["tepid",-0.047,-0.996],["sleepy",0.026,-0.957],["uncommitted",-0.002,-0.947],["subdued",0.077,-0.996],["comatose",-0.095,-0.995]]},{"v":0.2,"a":-1.0,"words":[["reserved",0.206,-0.993],["indifferent",0.224,-0.99],["numb",0.174,-0.995],["blas\u00e9",0.154,-0.996],["introverted",0.154,-0.979],["muted",0.146,-0.993],["aloof",0.239,-0.955],["lukewarm",0.263,-0.994],["ambivalent",0.259,-0.943],["languid",0.282,-0.989],["blank",0.102,-0.99],["meh",0.299,-0.995],["uninterested",0.294,-0.965]]},{"v":0.4,"a":-1.0,"words":[["idle",0.413,-0.994],["nonplussed",0.396,-0.975],["disinterested",0.413,-0.963],["inert",0.459,-0.996],["detached",0.413,-0.935],["lulled",0.325,-0.979],["absentminded",0.442,-0.926],["sedentary",0.494,-0.994]]},{"v":0.6,"a":-1.0,"words":[["sedate",0.615,-0.99],["meek",0.617,-0.993],["contemplative",0.581,-0.987],["noncommittal",0.583,-0.983],["impassive",0.57,-0.996],["quiet",0.663,-0.992],["languorous",0.534,-0.965],["unmoved",0.515,-0.99],["soft",0.599,-0.902],["drowsy",0.689,-0.926]]},{"v":0.8,"a":-1.0,"words":[["stoical",0.783,-0.996],["dispassionate",0.819,-0.971],["ordinary",0.83,-0.981],["restrained",0.763,-0.982],["passive",0.727,-0.992],["stoic",0.879,-0.996],["blase",0.878,-0.979],["unemotional",0.705,-0.983]]},{"v":1.0,"a":-1.0,"words":[["businesslike",0.99,-0.988],["sober",0.987,-0.977],["neutral",0.983,-0.974],["sacred",0.978,-0.96],["controlled",0.966,-0.964],["modest",0.972,-0.952],["moderate",0.992,-0.94],["matter-of-fact",0.99,-0.937],["still",0.935,-0.977],["unaffected",0.995,-0.928],["nonchalant",0.966,-0.934],["routine",0.984,-0.924],["self-controlled",0.986,-0.923],["unflappable",0.984,-0.922],["rational",0.991,-0.92],["sheltered",0.928,-0.947],["careful",0.909,-0.926]]}]}</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("grid-data").textContent);
+  const K = DATA.k || 10;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("plot");
+  const tip = document.getElementById("tip");
+  const dlg = document.getElementById("dlg");
+  const selected = new Map(); // word -> [valence, arousal]
+
+  // ---------- geometry ----------
+  const W = 640, PAD = 52, S = W - 2 * PAD;
+  const lo = -1, hi = 1;
+  const X = v => PAD + (v - lo) / (hi - lo) * S;
+  const Y = a => PAD + (hi - a) / (hi - lo) * S;
+  const fmt = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(1);
+  const maxN = Math.max(1, ...DATA.cells.map(c => c.words.length));
+  const radius = n => n === 0 ? 3 : 4 + 14 * Math.sqrt(n / maxN);
+  const hue = (v, a) => (Math.atan2(a, v) * 180 / Math.PI + 360) % 360;
+  const colour = (v, a) => {
+    const sat = Math.min(1, Math.hypot(v, a)) * 65 + 10;
+    return `hsl(${(150 - hue(v, a) + 360) % 360} ${sat}% var(--dot-l))`;
+  };
+
+  const el = (tag, attrs = {}, parent = svg) => {
+    const e = document.createElementNS(svgNS, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    parent.appendChild(e);
+    return e;
+  };
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${W}`);
+
+  // grid lines + ticks
+  const ticks = [-1, -0.5, 0, 0.5, 1];
+  for (const t of ticks) {
+    el("line", { x1: X(t), x2: X(t), y1: Y(-1), y2: Y(1), class: t === 0 ? "axis" : "gridline" });
+    el("line", { y1: Y(t), y2: Y(t), x1: X(-1), x2: X(1), class: t === 0 ? "axis" : "gridline" });
+    el("text", { x: X(t), y: Y(-1) + 18, "text-anchor": "middle", class: "lbl" }).textContent = t;
+    el("text", { x: X(-1) - 10, y: Y(t) + 4, "text-anchor": "end", class: "lbl" }).textContent = t;
+  }
+  el("circle", { cx: X(0), cy: Y(0), r: S / 2, class: "ring" });
+  el("text", { x: X(0), y: W - 8, "text-anchor": "middle", class: "axis-title" }).textContent = "Valence →";
+  el("text", { x: 14, y: Y(0), "text-anchor": "middle", class: "axis-title", transform: `rotate(-90 14 ${Y(0)})` }).textContent = "Arousal →";
+  const corners = [["happy", 1, 1, "end"], ["angry", -1, 1, "start"], ["gloomy", -1, -1, "start"], ["calm", 1, -1, "end"]];
+  for (const [name, v, a, anchor] of corners) {
+    el("text", { x: X(v) + (v > 0 ? 22 : -22), y: Y(a) + (a > 0 ? -24 : 38), "text-anchor": anchor, class: "corner" }).textContent = name;
+  }
+
+  // every word as a faint dot (toggle)
+  const wordLayer = el("g", { visibility: "hidden" });
+  for (const c of DATA.cells) for (const [, v, a] of c.words) {
+    el("circle", { cx: X(v), cy: Y(a), r: 1.6, style: `fill:${colour(v, a)}`, class: "word-dot" }, wordLayer);
+  }
+
+  // grid points
+  const pointLayer = el("g");
+  const cellStep = S * DATA.spacing / (hi - lo);
+  const points = DATA.cells.map((c, i) => {
+    const n = c.words.length;
+    const g = el("g", { "data-empty": n === 0 }, pointLayer);
+    const hit = el("rect", {
+      x: X(c.v) - cellStep / 2, y: Y(c.a) - cellStep / 2, width: cellStep, height: cellStep,
+      class: "hit", tabindex: 0, role: "button",
+      "aria-label": `valence ${fmt(c.v)}, arousal ${fmt(c.a)}: ${n} words`,
+    }, g);
+    const dot = el("circle", { cx: X(c.v), cy: Y(c.a), r: radius(n), class: "dot" + (n ? "" : " empty") }, g);
+    if (n) dot.style.fill = colour(c.v, c.a);
+    hit.addEventListener("pointerenter", e => { dot.classList.add("hl"); showTip(c, e); });
+    hit.addEventListener("pointermove", e => moveTip(e));
+    hit.addEventListener("pointerleave", () => { dot.classList.remove("hl"); hideTip(); });
+    hit.addEventListener("focus", () => { const r = hit.getBoundingClientRect(); showTip(c, { clientX: r.right, clientY: r.top }); });
+    hit.addEventListener("blur", hideTip);
+    hit.addEventListener("click", () => { hideTip(); openCell(c); });
+    hit.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openCell(c); } });
+    return { c, dot, g };
+  });
+
+  // ---------- tooltip ----------
+  const esc = s => s.replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  function showTip(c, e) {
+    const n = c.words.length;
+    const head = `<div class="h">(${fmt(c.v)}, ${fmt(c.a)}) · ${n} word${n === 1 ? "" : "s"}</div>`;
+    const body = n ? `<div class="w">${c.words.slice(0, K).map(w => esc(w[0])).join(", ")}</div>` : `<div class="w empty-note">No words here</div>`;
+    const more = n > K ? `<div class="more">+${n - K} more · click to see all</div>` : n ? `<div class="more">click to select</div>` : "";
+    tip.innerHTML = head + body + more;
+    tip.classList.add("show");
+    moveTip(e);
+  }
+  function moveTip(e) {
+    const pad = 14, r = tip.getBoundingClientRect();
+    let x = e.clientX + pad, y = e.clientY + pad;
+    if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+    if (y + r.height > innerHeight - 8) y = e.clientY - r.height - pad;
+    tip.style.left = Math.max(8, x) + "px";
+    tip.style.top = Math.max(8, y) + "px";
+  }
+  function hideTip() { tip.classList.remove("show"); }
+
+  // ---------- dialog ----------
+  let current = null, showAll = false;
+  const chipsEl = document.getElementById("dlgChips");
+  const moreBtn = document.getElementById("dlgMore");
+  function openCell(c) {
+    current = c; showAll = c.words.length <= K;
+    document.getElementById("dlgTitle").textContent = `Valence ${fmt(c.v)}, arousal ${fmt(c.a)}`;
+    const n = c.words.length;
+    document.getElementById("dlgSub").textContent =
+      n ? `${n} word${n === 1 ? "" : "s"}, nearest first. Click words to select them.` : "No words were rated near this point.";
+    renderChips();
+    dlg.showModal();
+  }
+  function shownWords() { return current ? (showAll ? current.words : current.words.slice(0, K)) : []; }
+  function renderChips() {
+    chipsEl.replaceChildren();
+    const words = shownWords();
+    if (!words.length) chipsEl.innerHTML = `<span class="empty-note">Nothing to pick here — try a neighbouring point.</span>`;
+    for (const [w, v, a] of words) {
+      const b = document.createElement("button");
+      b.className = "chip"; b.type = "button";
+      b.setAttribute("aria-pressed", selected.has(w));
+      b.title = `valence ${v.toFixed(2)}, arousal ${a.toFixed(2)}`;
+      b.textContent = w;
+      b.addEventListener("click", () => { toggle(w, v, a); b.setAttribute("aria-pressed", selected.has(w)); updateDlgButtons(); });
+      chipsEl.appendChild(b);
+    }
+    const hidden = current.words.length - words.length;
+    moreBtn.hidden = hidden <= 0 && !(showAll && current.words.length > K);
+    moreBtn.textContent = hidden > 0 ? `Show all ${current.words.length} words` : `Show top ${K} only`;
+    updateDlgButtons();
+  }
+  function updateDlgButtons() {
+    const words = shownWords();
+    const anySel = current && current.words.some(([w]) => selected.has(w));
+    document.getElementById("dlgAll").disabled = !words.length || words.every(([w]) => selected.has(w));
+    document.getElementById("dlgNone").disabled = !anySel;
+    document.getElementById("dlgCopy").disabled = !anySel;
+  }
+  moreBtn.addEventListener("click", () => { showAll = !showAll; renderChips(); });
+  document.getElementById("dlgAll").addEventListener("click", () => { for (const [w, v, a] of shownWords()) selected.set(w, [v, a]); syncAll(); renderChips(); });
+  document.getElementById("dlgNone").addEventListener("click", () => { for (const [w] of current.words) selected.delete(w); syncAll(); renderChips(); });
+  document.getElementById("dlgCopy").addEventListener("click", () => copy(current.words.filter(([w]) => selected.has(w)).map(([w]) => w)));
+  document.getElementById("dlgClose").addEventListener("click", () => dlg.close());
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+  // ---------- selection + tray ----------
+  function toggle(w, v, a) { selected.has(w) ? selected.delete(w) : selected.set(w, [v, a]); syncAll(); }
+  function syncAll() {
+    for (const p of points) p.dot.classList.toggle("has-sel", p.c.words.some(([w]) => selected.has(w)));
+    const tray = document.getElementById("tray");
+    tray.classList.toggle("show", selected.size > 0);
+    document.getElementById("trayCount").textContent = `${selected.size} selected`;
+    const box = document.getElementById("trayWords");
+    box.replaceChildren();
+    for (const w of selected.keys()) {
+      const b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.setAttribute("aria-pressed", "true");
+      b.title = "Remove"; b.textContent = w + " ×";
+      b.addEventListener("click", () => { selected.delete(w); syncAll(); if (dlg.open) renderChips(); });
+      box.appendChild(b);
+    }
+  }
+  document.getElementById("trayCopy").addEventListener("click", () => copy([...selected.keys()]));
+  document.getElementById("trayClear").addEventListener("click", () => { selected.clear(); syncAll(); if (dlg.open) renderChips(); });
+
+  function format(words) {
+    const f = document.getElementById("fmt").value;
+    return f === "lines" ? words.join("\n") : f === "json" ? JSON.stringify(words) : words.join(", ");
+  }
+  async function copy(words) {
+    const text = format(words);
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      (dlg.open ? dlg : document.body).appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } finally { ta.remove(); }
+    }
+    toast(`Copied ${words.length} word${words.length === 1 ? "" : "s"}`);
+  }
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
+  }
+
+  // ---------- controls + footer ----------
+  document.getElementById("showWords").addEventListener("change", e => wordLayer.setAttribute("visibility", e.target.checked ? "visible" : "hidden"));
+  document.getElementById("showEmpty").addEventListener("change", e => {
+    for (const p of points) if (!p.c.words.length) p.g.style.display = e.target.checked ? "" : "none";
+  });
+  const total = DATA.cells.reduce((s, c) => s + c.words.length, 0);
+  const full = DATA.cells.filter(c => c.words.length >= K).length;
+  document.getElementById("summary").textContent = `${total} words · ${DATA.cells.length} points · ${full} with ≥${K} words`;
+  document.getElementById("foot").textContent =
+    `Each word was rated in the sentence “${DATA.template.replace("{}", "___")}” and assigned to its nearest grid point ` +
+    `(spacing ${DATA.spacing}). Dot area ∝ word count. Corner labels are the model's four zero-shot classes.`;
+})();
+</script>
+</body>
+</html>

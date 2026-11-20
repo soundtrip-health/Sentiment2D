@@ -18,6 +18,7 @@ Example:
     python -m sentiment2d.adjective_grid --out adjective_grid.json
     python -m sentiment2d.adjective_grid --wordnet 3.0 --rerate --sources curated wordnet
     python -m sentiment2d.adjective_grid --layout bins --rank frequency --fill -k 5
+    python -m sentiment2d.adjective_grid --html adjective_grid.html
 
 Requires `wordfreq` (pip install wordfreq), used to rank words by familiarity, and `nltk`
 (with the wordnet corpus) if --wordnet is used.
@@ -32,6 +33,7 @@ import pandas as pd
 
 DEFAULT_WORDLIST = Path(__file__).parent / "data" / "affect_adjectives.txt"
 DEFAULT_TEMPLATE = "I feel {}."
+VIEWER_TEMPLATE = Path(__file__).parent / "data" / "grid_viewer.html"
 
 
 def load_wordlist(paths):
@@ -109,13 +111,21 @@ def cell_index(x, spacing, layout="points"):
 
 
 def build_grid(
-    ratings, spacing=0.2, k=10, layout="points", rank="distance", min_zipf=0.0, fill=False, sources=None
+    ratings,
+    spacing=0.2,
+    k=10,
+    layout="points",
+    rank="distance",
+    min_zipf=0.0,
+    fill=False,
+    sources=None,
+    coords=False,
 ):
     """Sort rated words into grid cells and pick up to k words per cell.
 
     :param ratings: DataFrame with word, valence, arousal, zipf columns (see rate_words).
     :param spacing: grid spacing along each axis.
-    :param k: maximum number of words to return per cell.
+    :param k: maximum number of words to return per cell (None for all of them).
     :param layout: "bins" (cells labelled by centre) or "points" (nearest grid point, inclusive).
     :param rank: "frequency" puts the most common words first; "distance" puts the words
                  closest to the cell coordinate first.
@@ -123,6 +133,7 @@ def build_grid(
     :param fill: if True, cells with fewer than k words get a separate "fill" list holding the
                  words from outside the cell that are nearest to the cell coordinate.
     :param sources: if given, only use ratings whose "source" column is in this list.
+    :param coords: if True, each entry in "words" is [word, valence, arousal] instead of a string.
     :return: list of dicts, one per cell, with valence, arousal, words, n_in_cell (and fill).
              The "words" list only ever holds words rated inside the cell.
     """
@@ -145,16 +156,42 @@ def build_grid(
                 {
                     "valence": round(float(axis[vi]), 6),
                     "arousal": round(float(axis[ai]), 6),
-                    "words": [] if g is None else g.word.head(k).tolist(),
+                    "words": [] if g is None else _cell_words(g if k is None else g.head(k), coords),
                     "n_in_cell": 0 if g is None else len(g),
                 }
             )
-            if fill and cells[-1]["n_in_cell"] < k:
+            if fill and k is not None and cells[-1]["n_in_cell"] < k:
                 outside = df[(df.vi != vi) | (df.ai != ai)]
                 d = np.hypot(outside.valence - axis[vi], outside.arousal - axis[ai])
                 n_fill = k - cells[-1]["n_in_cell"]
                 cells[-1]["fill"] = outside.word.iloc[np.argsort(d.to_numpy(), kind="stable")[:n_fill]].tolist()
     return cells
+
+
+def _cell_words(g, coords):
+    if not coords:
+        return g.word.tolist()
+    return [[w, round(float(v), 3), round(float(a), 3)] for w, v, a in zip(g.word, g.valence, g.arousal)]
+
+
+def write_html(ratings, path, k=10, **grid_kwargs):
+    """Write a self-contained interactive HTML viewer of the adjective grid.
+
+    Every word in each cell is embedded (with its own coordinates); the viewer shows the top k on
+    hover and all of them in the click-through dialog. grid_kwargs are passed to build_grid.
+    """
+    cells = build_grid(ratings, k=None, coords=True, **grid_kwargs)
+    data = {
+        "spacing": grid_kwargs.get("spacing", 0.2),
+        "layout": grid_kwargs.get("layout", "points"),
+        "rank": grid_kwargs.get("rank", "distance"),
+        "k": k,
+        "template": str(ratings.template.iloc[0]) if "template" in ratings else DEFAULT_TEMPLATE,
+        "cells": [{"v": c["valence"], "a": c["arousal"], "words": c["words"]} for c in cells],
+    }
+    page = VIEWER_TEMPLATE.read_text()
+    blob = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
+    Path(path).write_text(page.replace("/*__GRID_DATA__*/null", blob))
 
 
 def main(argv=None):
@@ -172,6 +209,7 @@ def main(argv=None):
     p.add_argument("--min-zipf", type=float, default=0.0, help="minimum word frequency (zipf scale)")
     p.add_argument("--fill", action="store_true", help="top up short cells with the nearest outside words")
     p.add_argument("--out", default="adjective_grid.json")
+    p.add_argument("--html", metavar="PATH", help="also write an interactive single-file HTML viewer")
     args = p.parse_args(argv)
 
     ratings_path = Path(args.ratings)
@@ -199,6 +237,19 @@ def main(argv=None):
         k: getattr(args, k) for k in ("spacing", "k", "layout", "rank", "min_zipf", "fill", "sources", "template")
     }
     Path(args.out).write_text(json.dumps({**meta, "cells": cells}, indent=1))
+
+    if args.html:
+        write_html(
+            ratings,
+            args.html,
+            k=args.k,
+            spacing=args.spacing,
+            layout=args.layout,
+            rank=args.rank,
+            min_zipf=args.min_zipf,
+            sources=args.sources,
+        )
+        print(f"Wrote viewer to {args.html}")
 
     short = [c for c in cells if c["n_in_cell"] < args.k]
     print(f"Wrote {len(cells)} cells to {args.out}; {len(short)} have fewer than {args.k} words")
